@@ -15,6 +15,8 @@ head
     link(href='css/bootstrap.min.css', rel='stylesheet')
     // Custom CSS
     link(href='css/modern-business.css', rel='stylesheet')
+    // Custom Slider CSS
+    link(href='css/bootstrap-slider.css', rel='stylesheet')
     link(rel='stylesheet', href='/css/style.css')
     // Custom Fonts
     link(href='font-awesome/css/font-awesome.min.css', rel='stylesheet', type='text/css')
@@ -24,7 +26,7 @@ head
       script(src='https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js')
       |         
       script(src='https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js')
-body
+body(onload='initialize()')
     include header
 
     block content

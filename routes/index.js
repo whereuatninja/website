@@ -9,7 +9,8 @@ var env = {
 }
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res) {
+  /*res.send('Hello World!');*/
   res.render('index', { title: 'Express', env: env });
 });
 

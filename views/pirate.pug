@@ -1,0 +1,33 @@
+extends layout
+
+block content
+    .container
+      .row
+        .col-lg-2.sidebar
+          ul.nav.nav-sidebar
+            li.active
+              a(href='#')
+                | Overview 
+                span.sr-only (current)
+            li
+              a(href='#') Reports
+            li
+              a(href='#') Analytics
+            li
+              a(href='#') Export
+        .col-lg-9.main
+          h2.sub-header My Map
+          #map          
+
+          h2.sub-header Time Range
+          input#ex16b(type='text')
+            
+          h2.sub-header Activities
+          #whereubeen.table-responsive
+            input#create(type='button', value='Click here', onclick='Javascript:addTable()')
+
+          h2.sub-header My Test
+          div
+            p.greeting-id The ID is 
+            p.greeting-content The content is
+    script(src='http://maps.googleapis.com/maps/api/js?key=AIzaSyCKJnJars0xRRUHCtbzBgTG7TWMQLk_rYc')  
