@@ -5,16 +5,12 @@ block content
       .row
         .col-lg-2.sidebar
           ul.nav.nav-sidebar
-            li.active
-              a(href='#')
-                | Overview 
-                span.sr-only (current)
             li
-              a(href='#') Reports
+              a(href='#') Ninja 1
             li
-              a(href='#') Analytics
+              a(href='#') Ninja 2
             li
-              a(href='#') Export
+              a(href='#') Ninja 3
         .col-lg-9.main
           h2.sub-header My Map
           #map          
@@ -24,10 +20,4 @@ block content
             
           h2.sub-header Activities
           #whereubeen.table-responsive
-            input#create(type='button', value='Click here', onclick='Javascript:addTable()')
-
-          h2.sub-header My Test
-          div
-            p.greeting-id The ID is 
-            p.greeting-content The content is
     script(src='http://maps.googleapis.com/maps/api/js?key=AIzaSyCKJnJars0xRRUHCtbzBgTG7TWMQLk_rYc')  

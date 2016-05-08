@@ -2,24 +2,25 @@ var slider = new Slider("#ex16b", { min: 0, max: 50, value: [0, 50], focus: true
 
 function initialize() {
 	console.log( "ready!" );
+	addTable();
 }
 
-$( document ).ready(function() {
+// $( document ).ready(function() {
     
-    $.ajax({
-    	type: "GET",
-    	data: data,
-    	dataType: 'jsonp',
-    	url: "http://192.168.99.100:3000/locations/84af3469-d270-407f-8717-01fd9ffac57e",
-    	success: function(data){
-			$.each(data, function (key, val) {
-    			movementCoordinates.push([item.lat, item.long]);
-    		});
+//     $.ajax({
+//     	type: "GET",
+//     	 data: data,
+//     	dataType: 'jsonp',
+//     	url: "http://192.168.99.100:3000/locations/84af3469-d270-407f-8717-01fd9ffac57e",
+//     	success: function(data){
+// 			$.each(data, function (key, val) {
+//     			movementCoordinates.push([item.lat, item.long]);
+//     		});
 
-    		console.log( "WTF");
-    	}
-	});
-});
+//     		console.log( "WTF");
+//     	}
+// 	});
+// });
 // Define your locations: HTML content for the info window, latitude, longitude
 var locations = [
 	['<h4>Arc de Triomphe</h4>', 48.873804, 2.294994],
@@ -101,52 +102,50 @@ function autoCenter() {
 }
 autoCenter();
 //var movementCoordinates = getMovementCoordinates();
-var movementCoordinates = [];
-
-
-// [   
-//       {lat: 48.873804, lng: 2.294994},
-//       {lat: 48.871887, lng: 2.300871},
-//       {lat: 48.868394, lng: 2.301139},
-//       {lat: 48.862762, lng: 2.301686},
-//       {lat: 48.860651, lng: 2.295516},
-//       {lat: 48.858908, lng: 2.293467},
-//       {lat: 48.858195, lng: 2.293124},
-//       {lat: 48.858153, lng: 2.294379},
-//       {lat: 48.857440, lng: 2.293885},
-//       {lat: 48.857913, lng: 2.295194},
-//       {lat: 48.856875, lng: 2.294818},
-//       {lat: 48.856423, lng: 2.296406},
-//       {lat: 48.858992, lng: 2.293498},
-//       {lat: 48.860551, lng: 2.295648},
-//       {lat: 48.854305, lng: 2.305410},
-//       {lat: 48.853698, lng: 2.314733},
-//       {lat: 48.857997, lng: 2.315227},
-//       {lat: 48.862896, lng: 2.315216},
-//       {lat: 48.862614, lng: 2.318982},
-//       {lat: 48.864072, lng: 2.320059},
-//       {lat: 48.860149, lng: 2.333288},
-//       {lat: 48.860798, lng: 2.334372},
-//       {lat: 48.860664, lng: 2.335477},
-//       {lat: 48.861172, lng: 2.335509},
-//       {lat: 48.861179, lng: 2.335970},
-//       {lat: 48.860515, lng: 2.335820},
-//       {lat: 48.861193, lng: 2.333803},
-//       {lat: 48.858511, lng: 2.332505},
-//       {lat: 48.857868, lng: 2.336195},
-//       {lat: 48.857332, lng: 2.338298},
-//       {lat: 48.856732, lng: 2.339028},
-//       {lat: 48.856619, lng: 2.338964},
-//       {lat: 48.856563, lng: 2.339093},
-//       {lat: 48.856888, lng: 2.339190},
-//       {lat: 48.856069, lng: 2.340413},
-//       {lat: 48.853676, lng: 2.338385},
-//       {lat: 48.852511, lng: 2.338771},
-//       {lat: 48.852920, lng: 2.337001},
-//       {lat: 48.854995, lng: 2.336819},
-//       {lat: 48.856280, lng: 2.336562},
-//       {lat: 48.856435, lng: 2.335253}
-// ];
+var movementCoordinates =
+[   
+      {lat: 48.873804, lng: 2.294994},
+      {lat: 48.871887, lng: 2.300871},
+      {lat: 48.868394, lng: 2.301139},
+      {lat: 48.862762, lng: 2.301686},
+      {lat: 48.860651, lng: 2.295516},
+      {lat: 48.858908, lng: 2.293467},
+      {lat: 48.858195, lng: 2.293124},
+      {lat: 48.858153, lng: 2.294379},
+      {lat: 48.857440, lng: 2.293885},
+      {lat: 48.857913, lng: 2.295194},
+      {lat: 48.856875, lng: 2.294818},
+      {lat: 48.856423, lng: 2.296406},
+      {lat: 48.858992, lng: 2.293498},
+      {lat: 48.860551, lng: 2.295648},
+      {lat: 48.854305, lng: 2.305410},
+      {lat: 48.853698, lng: 2.314733},
+      {lat: 48.857997, lng: 2.315227},
+      {lat: 48.862896, lng: 2.315216},
+      {lat: 48.862614, lng: 2.318982},
+      {lat: 48.864072, lng: 2.320059},
+      {lat: 48.860149, lng: 2.333288},
+      {lat: 48.860798, lng: 2.334372},
+      {lat: 48.860664, lng: 2.335477},
+      {lat: 48.861172, lng: 2.335509},
+      {lat: 48.861179, lng: 2.335970},
+      {lat: 48.860515, lng: 2.335820},
+      {lat: 48.861193, lng: 2.333803},
+      {lat: 48.858511, lng: 2.332505},
+      {lat: 48.857868, lng: 2.336195},
+      {lat: 48.857332, lng: 2.338298},
+      {lat: 48.856732, lng: 2.339028},
+      {lat: 48.856619, lng: 2.338964},
+      {lat: 48.856563, lng: 2.339093},
+      {lat: 48.856888, lng: 2.339190},
+      {lat: 48.856069, lng: 2.340413},
+      {lat: 48.853676, lng: 2.338385},
+      {lat: 48.852511, lng: 2.338771},
+      {lat: 48.852920, lng: 2.337001},
+      {lat: 48.854995, lng: 2.336819},
+      {lat: 48.856280, lng: 2.336562},
+      {lat: 48.856435, lng: 2.335253}
+];
 
 var travelPath = new google.maps.Polyline({
 		path: movementCoordinates,
