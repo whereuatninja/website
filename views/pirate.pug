@@ -13,11 +13,25 @@ block content
               a(href='#') Ninja 3
         .col-lg-9.main
           h2.sub-header My Map
-          #map          
+          #map
 
           h2.sub-header Time Range
           input#ex16b(type='text')
-            
+
+          h2 User ID: #{user.id}
           h2.sub-header Activities
           #whereubeen.table-responsive
-    script(src='http://maps.googleapis.com/maps/api/js?key=AIzaSyCKJnJars0xRRUHCtbzBgTG7TWMQLk_rYc')  
+          table#whereubeen.table.table-responsive.table-striped
+            tbody
+              tr
+                th Longitude
+                th Latitude
+              - var parsedlocs = JSON.parse(locations);
+              each loc in parsedlocs
+                tr
+                  td= loc.lat
+                  td= loc.long
+
+    script(type='text/javascript').
+      var locations = !{locations};
+    script(src='http://maps.googleapis.com/maps/api/js?key=AIzaSyCKJnJars0xRRUHCtbzBgTG7TWMQLk_rYc')

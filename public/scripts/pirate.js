@@ -2,11 +2,11 @@ var slider = new Slider("#ex16b", { min: 0, max: 50, value: [0, 50], focus: true
 
 function initialize() {
 	console.log( "ready!" );
-	addTable();
+	//addTable();
 }
 
 // $( document ).ready(function() {
-    
+
 //     $.ajax({
 //     	type: "GET",
 //     	 data: data,
@@ -22,14 +22,14 @@ function initialize() {
 // 	});
 // });
 // Define your locations: HTML content for the info window, latitude, longitude
-var locations = [
+/*var locations = [
 	['<h4>Arc de Triomphe</h4>', 48.873804, 2.294994],
     ['<h4>Eiffel Tower</h4>', 48.858398, 2.294438],
     ['<h4>Louvre Pyramid</h4>', 48.861430, 2.335880],
     ['<h4>Restaurant Guy Savoy</h4>', 48.856832, 2.339122],
     ['<h4>LHotel</h4>', 48.856535, 2.335270]
-];
-      
+];*/
+
 // Setup the different icons and shadows
 var iconURLPrefix = 'http://maps.google.com/mapfiles/ms/icons/';
 var icons = [	iconURLPrefix + 'red-dot.png',
@@ -71,18 +71,18 @@ var iconCounter = 0;
 //Add the markers and infowindows to the map
 for (var i = 0; i < locations.length; i++) {
 	var marker = new google.maps.Marker({
-    	position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+    	position: new google.maps.LatLng(locations[i].lat, locations[i].long),
     	map: map,
     	icon: icons[iconCounter]
     });
     markers.push(marker);
     google.maps.event.addListener(marker, 'click', (function(marker, i) {
     	return function() {
-      		infowindow.setContent(locations[i][0]);
+      		infowindow.setContent("testing");
       		infowindow.open(map, marker);
       	}
     })(marker, i));
-    
+
     iconCounter++;
     // We only have a limited number of possible icon colors, so we may have to restart the counter
     if(iconCounter >= iconsLength) {
@@ -103,7 +103,7 @@ function autoCenter() {
 autoCenter();
 //var movementCoordinates = getMovementCoordinates();
 var movementCoordinates =
-[   
+[
       {lat: 48.873804, lng: 2.294994},
       {lat: 48.871887, lng: 2.300871},
       {lat: 48.868394, lng: 2.301139},
@@ -160,17 +160,17 @@ travelPath.setMap(map);
 function addTable() {
 	var myTableDiv = document.getElementById("whereubeen")
     var table = document.createElement('TABLE')
-    
+
     table.className = "table table-striped"
     var tableBody = document.createElement('TBODY')
     table.appendChild(tableBody);
-    
+
     var heading = new Array();
     heading[0] = "Marker"
     heading[1] = "Date/Time"
     heading[2] = "Caption"
     heading[3] = "Message"
-    
+
     var stock = new Array()
     stock[0] = new Array(icons[0], "June, 15 2016 10:30", "Arc de Triomphe", "first stop")
     stock[1] = new Array(icons[1], "June, 15 2016 11:13", "Eiffel Tower", "second stop")
@@ -178,11 +178,11 @@ function addTable() {
     stock[3] = new Array(icons[3], "June, 15 2016 16:12", "Restaurant Guy Savoy", "fourth stop")
     stock[4] = new Array(icons[4], "June, 15 2016 19:44", "LHotel", "fifth stop")
     stock[5] = new Array("", "June, 15 2016 19:58", "Going Ninja", "")
-    
-    //TABLE COLUMNS      
+
+    //TABLE COLUMNS
     var tr = document.createElement('TR');
     tableBody.appendChild(tr);
-    
+
     for (i = 0; i < heading.length; i++) {
       	var th = document.createElement('TH')
       	th.appendChild(document.createTextNode(heading[i]));
