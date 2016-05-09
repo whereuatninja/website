@@ -8,7 +8,7 @@ var router = express.Router();
 router.get('/', ensureLoggedIn, function(req, res, next) {
   var userId = "87c6673b-ca53-440f-80ea-9c581caa6c1b";
 
-  getUserObj(userId, function(userObj){
+  getUserObj(req.user.token, function(userObj){
     var firstNinjaId = getFirstNinja(userObj);
     console.log("firstNinjaId: "+firstNinjaId);
     getLocationsFromNinja(firstNinjaId, function(locations){
@@ -40,11 +40,12 @@ function getLocationsFromNinja(firstNinjaId, callback){
 }
 
 
-function getUserObj(userId, callback){
+function getUserObj(token, callback){
   var options = {
-    url: "http://dev.whereuat.ninja/api/ninjas/"+userId,
+    url: "http://docker/api/ninjas/",
     method: 'GET',
-    json: true
+    json: true,
+    auth: { bearer: token }
   };
   var requestCallback = function(error, response, body){
     callback(body);
