@@ -9,6 +9,7 @@ var dotenv = require('dotenv');
 var passport = require('passport');
 var Auth0Strategy = require('passport-auth0');
 var jwt = require('jwt-simple');
+var request = require('request');
 
 dotenv.load();
 
@@ -27,8 +28,21 @@ var strategy = new Auth0Strategy({
     // extraParams.id_token has the JSON Web Token
     // profile has all the information from the user
 
-  var secret = new Buffer( process.env.AUTH0_CLIENT_SECRET, 'base64');
-  var id_token = jwt.decode(extraParams.id_token, secret);
+    var secret = new Buffer( process.env.AUTH0_CLIENT_SECRET, 'base64');
+    var id_token = jwt.decode(extraParams.id_token, secret);
+
+    var options = {
+      headers: {'content-type' : 'application/x-www-form-urlencoded'},
+      url: "http://node-1:3000/api/users/",
+      method: 'POST',
+      json: true,
+      body:    id_token,
+      auth: { bearer: token }
+    };
+    var requestCallback = function(error, response, body){
+      callback(body);
+    };
+    request(options, requestCallback);
 
     return done(null, { token: extraParams.id_token, profile: profile } );
   });

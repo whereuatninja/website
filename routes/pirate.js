@@ -18,9 +18,9 @@ router.get('/', ensureLoggedIn, function(req, res, next) {
   });
 });
 
-function getFirstNinja(userObj){
-  if(userObj.ninjas && userObj.ninjas.length > 0){
-    return userObj.ninjas[0];
+function getFirstNinja(ninjas){
+  if(ninjas && ninjas.length > 0){
+    return ninjas[0];
   }
   return undefined;
 }
@@ -42,7 +42,7 @@ function getLocationsFromNinja(firstNinjaId, callback){
 
 function getUserObj(token, callback){
   var options = {
-    url: "http://docker/api/ninjas/",
+    url: "http://node-1:3000/api/ninjas/",
     method: 'GET',
     json: true,
     auth: { bearer: token }
