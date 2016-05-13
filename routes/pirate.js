@@ -8,12 +8,12 @@ var router = express.Router();
 router.get('/', ensureLoggedIn, function(req, res, next) {
   var userId = "87c6673b-ca53-440f-80ea-9c581caa6c1b";
 
-  getUserObj(req.user.token, function(userObj){
-    var firstNinjaId = getFirstNinja(userObj);
+  getUserObj(req.user.token, function(ninjas){
+    var firstNinjaId = getFirstNinja(ninjas);
     console.log("firstNinjaId: "+firstNinjaId);
     getLocationsFromNinja(firstNinjaId, function(locations){
       console.log(locations);
-      res.render('pirate', { user: req.user, locations: locations});
+      res.render('pirate', { user: req.user, locations: locations, ninjas: ninjas});
     });
   });
 });
@@ -42,7 +42,7 @@ function getLocationsFromNinja(firstNinjaId, callback){
 
 function getUserObj(token, callback){
   var options = {
-    url: "http://node-1:3000/api/ninjas/",
+    url: "http://node-1:3000/api/ninjas",
     method: 'GET',
     json: true,
     auth: { bearer: token }

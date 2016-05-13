@@ -35,12 +35,9 @@ var strategy = new Auth0Strategy({
       headers: {'content-type' : 'application/x-www-form-urlencoded'},
       url: "http://node-1:3000/api/users/",
       method: 'POST',
-      json: true,
-      body:    id_token,
-      auth: { bearer: token }
+      auth: { bearer: extraParams.id_token }
     };
     var requestCallback = function(error, response, body){
-      callback(body);
     };
     request(options, requestCallback);
 
