@@ -5,9 +5,11 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
-var dotenv = require('dotenv')
+var dotenv = require('dotenv');
 var passport = require('passport');
 var Auth0Strategy = require('passport-auth0');
+var jwt = require('jwt-simple');
+var request = require('request');
 
 dotenv.load();
 
@@ -25,7 +27,21 @@ var strategy = new Auth0Strategy({
     // accessToken is the token to call Auth0 API (not needed in the most cases)
     // extraParams.id_token has the JSON Web Token
     // profile has all the information from the user
-    return done(null, profile);
+
+    var secret = new Buffer( process.env.AUTH0_CLIENT_SECRET, 'base64');
+    var id_token = jwt.decode(extraParams.id_token, secret);
+
+    var options = {
+      headers: {'content-type' : 'application/x-www-form-urlencoded'},
+      url: "http://node-1:3000/api/users/",
+      method: 'POST',
+      auth: { bearer: extraParams.id_token }
+    };
+    var requestCallback = function(error, response, body){
+    };
+    request(options, requestCallback);
+
+    return done(null, { token: extraParams.id_token, profile: profile } );
   });
 
 passport.use(strategy);

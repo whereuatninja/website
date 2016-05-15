@@ -1,5 +1,5 @@
 /*! =======================================================
-                      VERSION  7.0.3              
+                      VERSION  7.0.3
 ========================================================= */
 /*! =========================================================
  * bootstrap-slider.js
@@ -32,7 +32,7 @@
   position: relative;
 }
 .slider.slider-horizontal {
-  width: 210px;
+  width: 100%;
   height: 20px;
 }
 .slider.slider-horizontal .slider-track {

@@ -1,22 +1,22 @@
 extends layout
 
 block content
+    script(src='/scripts/bootstrap-slider.js')
+    script(src='/scripts/pirate.js')
     .container
       .row
         .col-lg-2.sidebar
           ul.nav.nav-sidebar
-            li
-              a(href='#') Ninja 1
-            li
-              a(href='#') Ninja 2
-            li
-              a(href='#') Ninja 3
+            each ninja in viewModel.ninjas
+              li
+                a(href='#') ninja.name
+
         .col-lg-9.main
           h2.sub-header My Map
           #map
 
           h2.sub-header Time Range
-          input#ex16b(type='text')
+          input#timeSlider(type='text')
 
           h2 User ID: #{user.id}
           h2.sub-header Activities
@@ -26,12 +26,14 @@ block content
               tr
                 th Longitude
                 th Latitude
-              - var parsedlocs = JSON.parse(locations);
-              each loc in parsedlocs
+              each loc in viewModel.locations
                 tr
                   td= loc.lat
                   td= loc.long
-
-    script(type='text/javascript').
-      var locations = !{locations};
     script(src='http://maps.googleapis.com/maps/api/js?key=AIzaSyCKJnJars0xRRUHCtbzBgTG7TWMQLk_rYc')
+    script(type='text/javascript').
+      $(document).ready(function(){
+        var slider = new Slider("#timeSlider", { min: 0, max: 50, value: [0, 50], focus: true });
+      });
+      var locations = !{viewModel.stringifiedLocations};
+      var mapModule = MapModule.initialize(document.getElementById('map'), locations);

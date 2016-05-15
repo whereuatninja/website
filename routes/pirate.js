@@ -6,30 +6,33 @@ var router = express.Router();
 
 /* GET user profile. */
 router.get('/', ensureLoggedIn, function(req, res, next) {
-  var userId = "87c6673b-ca53-440f-80ea-9c581caa6c1b";
-
-  getUserObj(userId, function(userObj){
-    var firstNinjaId = getFirstNinja(userObj);
-    console.log("firstNinjaId: "+firstNinjaId);
-    getLocationsFromNinja(firstNinjaId, function(locations){
-      console.log(locations);
-      res.render('pirate', { user: req.user, locations: locations});
+  getUserObj(req.user.token, function(ninjas){
+    var firstNinjaId = getFirstNinja(ninjas);
+    getLocationsFromNinja(req.user.token, firstNinjaId, function(locations){
+      var stringifiedLocations = JSON.stringify(locations);
+      var viewModel = {
+        locations: locations,
+        ninjas: ninjas,
+        stringifiedLocations: stringifiedLocations
+      };
+      res.render('pirate', { user: req.user, viewModel: viewModel });
     });
   });
 });
 
-function getFirstNinja(userObj){
-  if(userObj.ninjas && userObj.ninjas.length > 0){
-    return userObj.ninjas[0];
+function getFirstNinja(ninjas){
+  if(ninjas && ninjas.length > 0){
+    return ninjas[0];
   }
   return undefined;
 }
 
-function getLocationsFromNinja(firstNinjaId, callback){
+function getLocationsFromNinja(token, firstNinjaId, callback){
   var options = {
-    //url: "http://dev.whereuat.ninja/api/locations/84af3469-d270-407f-8717-01fd9ffac57e",
-    url: "http://dev.whereuat.ninja/api/locations/"+firstNinjaId,
-    method: 'GET'
+    url: "http://docker/api/locations/"+firstNinjaId,
+    method: 'GET',
+    json: true,
+    auth: { bearer: token }
   };
 
   var requestCallback = function(error, response, body){
@@ -40,13 +43,16 @@ function getLocationsFromNinja(firstNinjaId, callback){
 }
 
 
-function getUserObj(userId, callback){
+function getUserObj(token, callback){
+  console.log("token:"+token);
   var options = {
-    url: "http://dev.whereuat.ninja/api/ninjas/"+userId,
+    url: "http://docker/api/ninjas",
     method: 'GET',
-    json: true
+    json: true,
+    auth: { bearer: token }
   };
   var requestCallback = function(error, response, body){
+    console.log("body: %j", body);
     callback(body);
   };
   request(options, requestCallback);
