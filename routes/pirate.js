@@ -29,7 +29,7 @@ function getFirstNinja(ninjas){
 
 function getLocationsFromNinja(token, firstNinjaId, callback){
   var options = {
-    url: "http://docker/api/locations/"+firstNinjaId,
+    url: "http://node-1:3000/api/locations/"+firstNinjaId,
     method: 'GET',
     json: true,
     auth: { bearer: token }
@@ -46,7 +46,7 @@ function getLocationsFromNinja(token, firstNinjaId, callback){
 function getUserObj(token, callback){
   console.log("token:"+token);
   var options = {
-    url: "http://docker/api/ninjas",
+    url: "http://node-1:3000/api/ninjas",
     method: 'GET',
     json: true,
     auth: { bearer: token }

@@ -16,6 +16,8 @@ dotenv.load();
 var routes = require('./routes/index');
 var user = require('./routes/user');
 var pirate = require('./routes/pirate');
+var about = require('./routes/about');
+var contact = require('./routes/contact');
 
 // This will configure Passport to use Auth0
 var strategy = new Auth0Strategy({
@@ -81,6 +83,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/user', user);
 app.use('/pirate', pirate);
+app.use('/about', about);
+app.use('/contact', contact);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

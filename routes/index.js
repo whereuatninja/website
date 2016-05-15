@@ -10,8 +10,7 @@ var env = {
 
 /* GET home page. */
 router.get('/', function(req, res) {
-  /*res.send('Hello World!');*/
-  res.render('index', { title: 'Express', env: env });
+  res.render('index', { user: req.user, title: 'Express', env: env });
 });
 
 router.get('/login',
@@ -25,7 +24,7 @@ router.get('/logout', function(req, res){
 });
 
 router.get('/callback',
-  passport.authenticate('auth0', { failureRedirect: '/url-if-something-fails' }),
+  passport.authenticate('auth0', { failureRedirect: '/' }),
   function(req, res) {
     res.redirect(req.session.returnTo || '/pirate');
   });
