@@ -20,9 +20,23 @@ router.get('/', ensureLoggedIn, function(req, res, next) {
   });
 });
 
+router.get('/:ninja_id', ensureLoggedIn, function(req, res, next) {
+  getUserObj(req.user.token, function(ninjas){
+    getLocationsFromNinja(req.user.token, req.params.ninja_id, function(locations){
+      var stringifiedLocations = JSON.stringify(locations);
+      var viewModel = {
+        locations: locations,
+        ninjas: ninjas,
+        stringifiedLocations: stringifiedLocations
+      };
+      res.render('pirate', { user: req.user, viewModel: viewModel });
+    });
+  });
+});
+
 function getFirstNinja(ninjas){
   if(ninjas && ninjas.length > 0){
-    return ninjas[0];
+    return ninjas[0].id;
   }
   return undefined;
 }
