@@ -9,7 +9,7 @@ block content
           ul.nav.nav-sidebar
             each ninja in viewModel.ninjas
               li
-                a(href='#') ninja.name
+                a(href='/pirate/' + ninja.id) #{ninja.name}
 
         .col-lg-9.main
           h2.sub-header My Map
