@@ -7,9 +7,10 @@ block content
       .row
         .col-lg-2.sidebar
           ul.nav.nav-sidebar
-            each ninja in viewModel.ninjas
-              li
-                a(href='/pirate/' + ninja.id) #{ninja.name}
+            if viewModel.ninjas
+              each ninja in viewModel.ninjas
+                li
+                  a(href='/pirate/' + ninja.id) #{ninja.name}
 
         .col-lg-9.main
           h2.sub-header My Map
@@ -30,7 +31,7 @@ block content
                 tr
                   td= loc.lat
                   td= loc.long
-    script(src='http://maps.googleapis.com/maps/api/js?key=AIzaSyCKJnJars0xRRUHCtbzBgTG7TWMQLk_rYc')
+    script(src='https://maps.googleapis.com/maps/api/js?key=AIzaSyCKJnJars0xRRUHCtbzBgTG7TWMQLk_rYc')
     script(type='text/javascript').
       $(document).ready(function(){
         var slider = new Slider("#timeSlider", { min: 0, max: 50, value: [0, 50], focus: true });
