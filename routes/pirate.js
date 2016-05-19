@@ -1,36 +1,40 @@
 var express = require('express');
 var passport = require('passport');
-var request = require('request');
+//var request = require('request');
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn()
 var router = express.Router();
+var rp = require('request-promise');
 
 /* GET user profile. */
 router.get('/', ensureLoggedIn, function(req, res, next) {
-  getUserObj(req.user.token, function(ninjas){
-    var firstNinjaId = getFirstNinja(ninjas);
-    getLocationsFromNinja(req.user.token, firstNinjaId, function(locations){
-      var stringifiedLocations = JSON.stringify(locations);
-      var viewModel = {
-        locations: locations,
-        ninjas: ninjas,
-        stringifiedLocations: stringifiedLocations
-      };
-      res.render('pirate', { user: req.user, viewModel: viewModel });
-    });
+  var token = req.user.token;
+  var user = req.user;
+  var viewModel = {};
+  getNinjas(token)
+  .then(function(ninjas){
+    viewModel.ninjas = ninjas;
+    var ninjaId = getFirstNinja(ninjas);
+    return getLocationsByNinjaId(token, ninjaId);
+  })
+  .then(function(locations){
+    viewModel.locations = locations;
+     res.render('pirate', { user: user, viewModel: viewModel });
   });
 });
 
 router.get('/:ninja_id', ensureLoggedIn, function(req, res, next) {
-  getUserObj(req.user.token, function(ninjas){
-    getLocationsFromNinja(req.user.token, req.params.ninja_id, function(locations){
-      var stringifiedLocations = JSON.stringify(locations);
-      var viewModel = {
-        locations: locations,
-        ninjas: ninjas,
-        stringifiedLocations: stringifiedLocations
-      };
-      res.render('pirate', { user: req.user, viewModel: viewModel });
-    });
+  var token = req.user.token;
+  var user = req.user;
+  var ninjaId = req.params.ninja_id;
+  var viewModel = {};
+  getNinjas(token)
+  .then(function(ninjas){
+    viewModel.ninjas = ninjas;
+    return getLocationsByNinjaId(token, ninjaId);
+  })
+  .then(function(locations){
+    viewModel.locations = locations;
+    res.render('pirate', { user: user, viewModel: viewModel });
   });
 });
 
@@ -41,7 +45,7 @@ function getFirstNinja(ninjas){
   return undefined;
 }
 
-function getLocationsFromNinja(token, firstNinjaId, callback){
+function getLocationsByNinjaId(token, firstNinjaId){
   var options = {
     url: "http://node-1:3000/api/locations/"+firstNinjaId,
     method: 'GET',
@@ -49,27 +53,17 @@ function getLocationsFromNinja(token, firstNinjaId, callback){
     auth: { bearer: token }
   };
 
-  var requestCallback = function(error, response, body){
-    callback(body);
-  };
-
-  request(options,requestCallback);
+  return rp(options).promise();
 }
 
-
-function getUserObj(token, callback){
-  console.log("token:"+token);
+function getNinjas(token){
   var options = {
     url: "http://node-1:3000/api/ninjas",
     method: 'GET',
     json: true,
     auth: { bearer: token }
   };
-  var requestCallback = function(error, response, body){
-    console.log("body: %j", body);
-    callback(body);
-  };
-  request(options, requestCallback);
+  return rp(options).promise();
 }
 
 module.exports = router;

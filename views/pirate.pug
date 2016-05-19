@@ -19,7 +19,6 @@ block content
           h2.sub-header Time Range
           input#timeSlider(type='text')
 
-          h2 User ID: #{user.id}
           h2.sub-header Activities
           #whereubeen.table-responsive
           table#whereubeen.table.table-responsive.table-striped
@@ -27,15 +26,16 @@ block content
               tr
                 th Longitude
                 th Latitude
+                th Time
               each loc in viewModel.locations
                 tr
                   td= loc.lat
                   td= loc.long
+                  td= loc.time
 
     script(src='//maps.googleapis.com/maps/api/js?key=AIzaSyCKJnJars0xRRUHCtbzBgTG7TWMQLk_rYc')
     script(type='text/javascript').
       $(document).ready(function(){
         var slider = new Slider("#timeSlider", { min: 0, max: 50, value: [0, 50], focus: true });
       });
-      var locations = !{viewModel.stringifiedLocations};
-      var mapModule = MapModule.initialize(document.getElementById('map'), locations);
+      var mapModule = MapModule.initialize(document.getElementById('map'), !{JSON.stringify(viewModel.locations)});
