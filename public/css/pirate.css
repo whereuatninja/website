@@ -1,0 +1,7 @@
+.nav-sidebar>li.active{
+  background-color: #337ab7;
+}
+
+.nav-sidebar>li.active>a{
+  color: white;
+}

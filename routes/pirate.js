@@ -14,6 +14,7 @@ router.get('/', ensureLoggedIn, function(req, res, next) {
   .then(function(ninjas){
     viewModel.ninjas = ninjas;
     var ninjaId = getFirstNinja(ninjas);
+    viewModel.currentNinjaId = ninjaId;
     return getLocationsByNinjaId(token, ninjaId);
   })
   .then(function(locations){
@@ -26,7 +27,7 @@ router.get('/:ninja_id', ensureLoggedIn, function(req, res, next) {
   var token = req.user.token;
   var user = req.user;
   var ninjaId = req.params.ninja_id;
-  var viewModel = {};
+  var viewModel = {currentNinjaId: ninjaId};
   getNinjas(token)
   .then(function(ninjas){
     viewModel.ninjas = ninjas;
@@ -47,7 +48,7 @@ function getFirstNinja(ninjas){
 
 function getLocationsByNinjaId(token, firstNinjaId){
   var options = {
-    url: "http://node-1:3000/api/locations/"+firstNinjaId,
+    url: "http://docker/api/locations/"+firstNinjaId,
     method: 'GET',
     json: true,
     auth: { bearer: token }
@@ -58,7 +59,7 @@ function getLocationsByNinjaId(token, firstNinjaId){
 
 function getNinjas(token){
   var options = {
-    url: "http://node-1:3000/api/ninjas",
+    url: "http://docker/api/ninjas",
     method: 'GET',
     json: true,
     auth: { bearer: token }
