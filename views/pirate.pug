@@ -14,29 +14,45 @@ block content
                 li(class=liClass)
                   a(href='/pirate/' + ninja.id) #{ninja.name}
         .col-lg-9.main
-          h2.sub-header My Map
-          #map
+          if !viewModel.locations
+            h3 No Locations Found!
+          else
+            h2.sub-header My Map
+            #map
+            if viewModel.locations
+              h2.sub-header Time Range
+              div.well
+                b#slider-after-label After
+                b#slider-timezone-label TimeZone
+                b#slider-before-label Before
+                br
+                input#timeSlider(type='text')
 
-          h2.sub-header Time Range
-          input#timeSlider(type='text')
-
-          h2.sub-header Activities
-          #whereubeen.table-responsive
-          table#whereubeen.table.table-responsive.table-striped
-            tbody
-              tr
-                th Longitude
-                th Latitude
-                th Time
-              each loc in viewModel.locations
+            h2.sub-header Activities
+            #whereubeen.table-responsive
+            table#whereubeen.table.table-responsive.table-striped
+              tbody
                 tr
-                  td= loc.lat
-                  td= loc.long
-                  td= loc.time
+                  th Longitude
+                  th Latitude
+                  th Time
+                each loc in viewModel.locations
+                  tr
+                    td= loc.lat
+                    td= loc.long
+                    td= loc.time
+            if viewModel.locations
+              script(src='//maps.googleapis.com/maps/api/js?key=AIzaSyCKJnJars0xRRUHCtbzBgTG7TWMQLk_rYc')
+              script(type='text/javascript').
+                $(document).ready(function(){
+                  var dateSlider = new WhereUAtDateSlider.initialize({
+                      sliderId: "#timeSlider",
+                      minSliderTime: "#{viewModel.minSliderTime}",
+                      maxSliderTime: "#{viewModel.maxSliderTime}",
+                      beforeLabelId: "slider-before-label",
+                      afterLabelId: "slider-after-label",
+                      timeZoneLabelId: "slider-timezone-label"
+                  });
+                  var mapModule = MapModule.initialize(document.getElementById('map'), !{JSON.stringify(viewModel.locations)});
+                });
 
-    script(src='//maps.googleapis.com/maps/api/js?key=AIzaSyCKJnJars0xRRUHCtbzBgTG7TWMQLk_rYc')
-    script(type='text/javascript').
-      $(document).ready(function(){
-        var slider = new Slider("#timeSlider", { min: 0, max: 50, value: [0, 50], focus: true });
-      });
-      var mapModule = MapModule.initialize(document.getElementById('map'), !{JSON.stringify(viewModel.locations)});

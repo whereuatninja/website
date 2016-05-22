@@ -10,3 +10,7 @@
 @media all and (max-width: 991px) {
     #map-outer  { height: 650px }
 }
+
+.main{
+    text-align: center;
+}

@@ -1,7 +1,21 @@
 .nav-sidebar>li.active{
+  background-color: #337ab7 !important;
+}
+
+.nav-sidebar>li.active:hover{
   background-color: #337ab7;
 }
 
 .nav-sidebar>li.active>a{
   color: white;
+}
+
+#slider-before-label{
+  float: right;
+  padding-left: 1em;
+}
+
+#slider-after-label{
+  float: left;
+  padding-right: 1em;
 }

@@ -34,10 +34,22 @@ router.get('/:ninja_id', ensureLoggedIn, function(req, res, next) {
     return getLocationsByNinjaId(token, ninjaId);
   })
   .then(function(locations){
-    viewModel.locations = locations;
+    if(locations.length > 0){
+      viewModel.minSliderTime = getMinLocationTime(locations);
+      viewModel.maxSliderTime = getMaxLocationTime(locations);
+      viewModel.locations = locations;
+    }
     res.render('pirate', { user: user, viewModel: viewModel });
   });
 });
+
+function getMaxLocationTime(locations){
+  return locations[0].time;
+}
+
+function getMinLocationTime(locations){
+  return locations[locations.length-1].time;
+}
 
 function getFirstNinja(ninjas){
   if(ninjas && ninjas.length > 0){
