@@ -3,20 +3,32 @@ var MapModule = (function(){
 	var _locations;
 	var _googleMapsLatLng = [];
 	var _map;
+	var _polyLine;
+	var _currentLocationMarker;
 
 	var initialize = function(mapElem, locations){
-		_locations = locations;
-		_googleMapsLatLng = _getGoogleMapsLatLng();
-
+		setLocations(locations);
 		_initializeMap(mapElem);
 		drawPolyLine(_googleMapsLatLng);
 		centerMap(_googleMapsLatLng);
 		addMarkerAtMostRecentPosition();
 	};
 
-	var _getGoogleMapsLatLng = function(){
+	var setLocations = function(locations){
+		_locations = locations;
+		_googleMapsLatLng = _getGoogleMapsLatLng(locations);
+	};
+
+	var redraw = function(){
+		_polyLine.setMap(null);
+		_currentLocationMarker.setMap(null);
+		drawPolyLine(_googleMapsLatLng);
+		centerMap(_googleMapsLatLng);
+	};
+
+	var _getGoogleMapsLatLng = function(locations){
 		var googleMapsLatLng = [];
-		_locations.forEach(function(loc){
+		locations.forEach(function(loc){
 			googleMapsLatLng.push(new google.maps.LatLng(loc.lat, loc.long));
 		});
 		return googleMapsLatLng;
@@ -24,25 +36,26 @@ var MapModule = (function(){
 
 	var addMarkerAtMostRecentPosition = function(){
 		var mostRecentPosition = _googleMapsLatLng[_googleMapsLatLng.length-1];
-		addMarker(mostRecentPosition, "We\'re here right now!");
+		_currentLocationMarker = addMarker(mostRecentPosition, "We\'re here right now!");
 	};
 
 	var addMarker = function(googleMapsLatLng, content){
 		var marker = new google.maps.Marker({
-	    position: googleMapsLatLng,
-	    map: _map,
-	    title: 'We\'re here right now!'
-	  });
+			position: googleMapsLatLng,
+			map: _map,
+			title: 'We\'re here right now!'
+		});
 
 		google.maps.event.addListener(marker, 'click', (function(marker) {
-			var infowindow = new google.maps.InfoWindow({
-			      maxWidth: 160
-			});
-    	return function() {
-      		infowindow.setContent(content);
-      		infowindow.open(_map, marker);
-      	}
-    })(marker));
+				var infowindow = new google.maps.InfoWindow({
+					  maxWidth: 160
+				});
+			return function() {
+				infowindow.setContent(content);
+				infowindow.open(_map, marker);
+			}
+		})(marker));
+		return marker;
 	};
 
 	var _initializeMap = function(mapElem){
@@ -60,14 +73,14 @@ var MapModule = (function(){
 	};
 
 	var drawPolyLine = function(googleMapsLatLng){
-		var travelPath = new google.maps.Polyline({
+		_polyLine = new google.maps.Polyline({
 			path: googleMapsLatLng,
     	geodesic: true,
     	strokeColor: '#FF0000',
     	strokeOpacity: 1.0,
     	strokeWeight: 2
 		});
-		travelPath.setMap(_map);
+		_polyLine.setMap(_map);
 	}
 
 	var centerMap = function(googleMapsLatLng){
@@ -82,7 +95,9 @@ var MapModule = (function(){
 
 	return {
 		initialize: initialize,
-		drawPolyLine: drawPolyLine
+		drawPolyLine: drawPolyLine,
+		setLocations: setLocations,
+		redraw: redraw
 	};
 })();
 
@@ -91,7 +106,7 @@ var WhereUAtDateSlider = (function(){
 	var _sliderElemId;
 	var _minTimeDate;
 	var _maxTimeDate;
-	var _sliderStep = 3600*1000;//seconds in an hour
+	var _sliderStep = 3600;//seconds in an hour
 	var _minSliderEpochTime;
 	var _maxSliderEpochTime;
 	var _minSliderDate;
@@ -135,13 +150,13 @@ var WhereUAtDateSlider = (function(){
 
 	var setupMinMaxSliderDates = function(){
 		_minSliderDate = new Date(_minTimeDate.getFullYear(), _minTimeDate.getMonth(), _minTimeDate.getDate(), 0, 0);
-		_maxSliderDate = new Date(_maxTimeDate.getFullYear(), _maxTimeDate.getMonth(), _maxTimeDate.getDate(), 23, 59);
+		_maxSliderDate = new Date(_maxTimeDate.getFullYear(), _maxTimeDate.getMonth(), _maxTimeDate.getDate(), 24, 00);
 		_minSliderEpochTime = getUtcEpochTimeFromDate(_minSliderDate);
 		_maxSliderEpochTime = getUtcEpochTimeFromDate(_maxSliderDate);
 	};
 
 	var getUtcEpochTimeFromDate = function (dateObj){
-		return Date.UTC(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate(), dateObj.getHours(), dateObj.getSeconds());
+		return Date.UTC(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate(), dateObj.getHours(), dateObj.getSeconds())/1000;
 	};
 
 	var getEpochTimeFromDate = function(dateObj){
@@ -160,12 +175,117 @@ var WhereUAtDateSlider = (function(){
 	};
 
 	var toolTipFormatter = function(sliderEpochValues){
-		var afterToolTipDate = new Date(sliderEpochValues[0]);
-		var beforeToolTipDate = new Date(sliderEpochValues[1]);
-		return "Show locations from: "+afterToolTipDate.toLocaleString()+" to: "+ beforeToolTipDate.toLocaleString();
+		//var afterToolTipDate = new Date(sliderEpochValues[0]*1000);
+		//var beforeToolTipDate = new Date(sliderEpochValues[1]*1000);
+		var afterToolTipDate = new Date(0);
+		afterToolTipDate.setUTCSeconds(sliderEpochValues[0]);
+		var beforeToolTipDate = new Date(0);
+		beforeToolTipDate.setUTCSeconds(sliderEpochValues[1]);
+		return "Show locations from: "+afterToolTipDate.toUTCString()+" to: "+ beforeToolTipDate.toUTCString();
+	};
+
+	var getSliderValues = function(){
+		return _slider.getValue();
 	};
 	
+	return {
+		initialize: initialize,
+		getSliderValues: getSliderValues
+	};
+})();
+
+var LocationLoader = (function(){
+	var _filterButton;
+	var _$locationTbody;
+
+	var initialize = function(){
+		_filterButton = new LoaderButton("button-filter");
+		_$locationTbody = $("#whereubeen>tbody");
+		setupEventListeners();
+	};
+
+	var setupEventListeners = function(){
+		_filterButton.get().on("click", onFilterButtonClick);
+	};
+
+	var onFilterButtonClick = function(e){
+		_filterButton.showLoading();
+		showTableLoading();
+		getLocations();
+	};
+
+	var showTableLoading = function(){
+		_$locationTbody.html("");
+		$("#activityLoader").show();
+	};
+
+	var hideTableLoading = function(){
+		$("#activityLoader").hide();
+	};
+
+	var getQueryParameters = function(){
+		var sliderValues = WhereUAtDateSlider.getSliderValues();
+		var params = {
+			after: sliderValues[0],
+			before: sliderValues[1]
+		};
+		return $.param(params);
+	};
+
+	var getLocations = function(){
+		var queryParameters = getQueryParameters();
+		var options = {
+			url: "/locations/"+ninjaId+"?"+queryParameters,
+			method: "GET",
+			dataType: "json"
+		};
+		var $promise = $.ajax(options);
+		$promise.done(function(response){
+			_filterButton.hideLoading();
+			hideTableLoading();
+			MapModule.setLocations(response.locations);
+			MapModule.redraw();
+			_$locationTbody.html(response.locationListHtml);
+		});
+
+		$promise.fail(function(){
+			alert("Ahhhh crap that didn't work...")
+		});
+	};
+
 	return {
 		initialize: initialize
 	};
 })();
+
+var LoaderButton = function(id){
+	var _id;
+	var _$elem;
+	var _$loadingSpinner;
+
+	function initialize(id){
+		_id = id;
+		_$elem = $("#"+id);
+		_$loadingSpinner = _$elem.children(".glyphicon-refresh");
+	}
+
+	function showLoading(){
+		_$loadingSpinner.css("display", "inline-block");
+	}
+
+	function hideLoading(){
+		_$loadingSpinner.css("display", "none");
+	}
+
+	function get(){
+		return _$elem;
+	}
+
+	initialize(id);
+
+	return {
+		showLoading: showLoading,
+		hideLoading: hideLoading,
+		get: get
+	};
+}

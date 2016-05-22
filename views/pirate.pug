@@ -27,23 +27,32 @@ block content
                 b#slider-before-label Before
                 br
                 input#timeSlider(type='text')
+                br
+                button#button-filter.btn.btn-primary Filter
+                  span#button-filter-loader.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
 
             h2.sub-header Activities
             #whereubeen.table-responsive
             table#whereubeen.table.table-responsive.table-striped
-              tbody
+              thead
                 tr
                   th Longitude
                   th Latitude
                   th Time
+              tbody
                 each loc in viewModel.locations
                   tr
                     td= loc.lat
                     td= loc.long
-                    td= loc.time
+                    -var time = new Date(loc.time).toUTCString();
+                    td= time
+            div#activityLoader
+              strong Loading Activities...
+              span#activity-loader.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
             if viewModel.locations
               script(src='//maps.googleapis.com/maps/api/js?key=AIzaSyCKJnJars0xRRUHCtbzBgTG7TWMQLk_rYc')
               script(type='text/javascript').
+                var ninjaId = "#{viewModel.ninjaId}";
                 $(document).ready(function(){
                   var dateSlider = new WhereUAtDateSlider.initialize({
                       sliderId: "#timeSlider",
@@ -54,5 +63,6 @@ block content
                       timeZoneLabelId: "slider-timezone-label"
                   });
                   var mapModule = MapModule.initialize(document.getElementById('map'), !{JSON.stringify(viewModel.locations)});
+                  var locationLoader = LocationLoader.initialize();
                 });
 

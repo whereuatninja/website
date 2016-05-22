@@ -1,7 +1,7 @@
 var express = require('express');
 var passport = require('passport');
 //var request = require('request');
-var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn()
+var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var router = express.Router();
 var rp = require('request-promise');
 
@@ -38,6 +38,7 @@ router.get('/:ninja_id', ensureLoggedIn, function(req, res, next) {
       viewModel.minSliderTime = getMinLocationTime(locations);
       viewModel.maxSliderTime = getMaxLocationTime(locations);
       viewModel.locations = locations;
+      viewModel.ninjaId = ninjaId;
     }
     res.render('pirate', { user: user, viewModel: viewModel });
   });

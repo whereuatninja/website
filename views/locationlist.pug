@@ -1,0 +1,6 @@
+each loc in locations
+  tr
+    td= loc.lat
+    td= loc.long
+    -var time = new Date(loc.time).toUTCString();
+    td= time

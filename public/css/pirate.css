@@ -19,3 +19,12 @@
   float: left;
   padding-right: 1em;
 }
+
+#button-filter-loader{
+  display: none;
+}
+
+#activityLoader{
+  text-align: center;
+  display: none;
+}
