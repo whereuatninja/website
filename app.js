@@ -18,6 +18,7 @@ var user = require('./routes/user');
 var pirate = require('./routes/pirate');
 var about = require('./routes/about');
 var contact = require('./routes/contact');
+var locations = require('./routes/locations');
 
 // This will configure Passport to use Auth0
 var strategy = new Auth0Strategy({
@@ -85,6 +86,7 @@ app.use('/user', user);
 app.use('/pirate', pirate);
 app.use('/about', about);
 app.use('/contact', contact);
+app.use('/locations', locations);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

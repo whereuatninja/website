@@ -1,7 +1,7 @@
 var express = require('express');
 var passport = require('passport');
 //var request = require('request');
-var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn()
+var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var router = express.Router();
 var rp = require('request-promise');
 
@@ -38,6 +38,7 @@ router.get('/:ninja_id', ensureLoggedIn, function(req, res, next) {
       viewModel.minSliderTime = getMinLocationTime(locations);
       viewModel.maxSliderTime = getMaxLocationTime(locations);
       viewModel.locations = locations;
+      viewModel.ninjaId = ninjaId;
     }
     res.render('pirate', { user: user, viewModel: viewModel });
   });
@@ -60,7 +61,7 @@ function getFirstNinja(ninjas){
 
 function getLocationsByNinjaId(token, firstNinjaId){
   var options = {
-    url: "http://docker/api/locations/"+firstNinjaId,
+    url: "http://node-1:3000/api/locations/"+firstNinjaId,
     method: 'GET',
     json: true,
     auth: { bearer: token }
@@ -71,7 +72,7 @@ function getLocationsByNinjaId(token, firstNinjaId){
 
 function getNinjas(token){
   var options = {
-    url: "http://docker/api/ninjas",
+    url: "http://node-1:3000/api/ninjas",
     method: 'GET',
     json: true,
     auth: { bearer: token }
