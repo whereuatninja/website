@@ -1,8 +1,12 @@
 extends layout
 
 block content
+    // Custom Slider CSS
+    link(href='/css/bootstrap-slider.css', rel='stylesheet')
+    link(href='/css/bootstrap-datepicker.css', rel='stylesheet')
     link(href='/css/pirate.css', rel='stylesheet')
     script(src='/scripts/bootstrap-slider.js')
+    script(src='/scripts/bootstrap-datepicker.js')
     script(src='/scripts/pirate.js')
     .container
       .row
@@ -28,7 +32,9 @@ block content
                 br
                 input#timeSlider(type='text')
                 br
-                button#button-filter.btn.btn-primary Filter
+                button#button-datepicker.btn.btn-default.btn-lg(type='button', aria-label='Pick a Date') Pick a Date
+                    span.glyphicon.glyphicon-calendar(aria-hidden='true', style='padding-left: .25em')
+                button#button-filter.btn.btn-primary.btn-lg Filter
                   span#button-filter-loader.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
 
             h2.sub-header Activities
@@ -64,5 +70,6 @@ block content
                   });
                   var mapModule = MapModule.initialize(document.getElementById('map'), !{JSON.stringify(viewModel.locations)});
                   var locationLoader = LocationLoader.initialize();
+                  var locationDatePicker = LocationDatePicker.initialize("#{viewModel.minSliderTime}", "#{viewModel.maxSliderTime}");
                 });
 

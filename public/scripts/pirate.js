@@ -187,10 +187,53 @@ var WhereUAtDateSlider = (function(){
 	var getSliderValues = function(){
 		return _slider.getValue();
 	};
+
+	var setSliderToDateByEpoch = function(startDateEpoch){
+		var endOfDayEpoch = startDateEpoch + (24*60*60);
+		_slider.setValue([startDateEpoch, endOfDayEpoch]);
+	};
 	
 	return {
 		initialize: initialize,
-		getSliderValues: getSliderValues
+		getSliderValues: getSliderValues,
+		setSliderToDateByEpoch: setSliderToDateByEpoch
+	};
+})();
+
+var LocationDatePicker = (function(){
+	var _button;
+	var _minDate;
+	var _maxDate;
+
+	var initialize = function(minEpoch, maxEpoch){
+		_button = document.getElementById("button-datepicker");
+		setupTimeDates(minEpoch, maxEpoch);
+		setupDatePicker();
+	};
+
+	var setupDatePicker = function(){
+		$(_button).datepicker({
+			title: "Pick a date range",
+			startDate: _minDate,
+			endDate: _maxDate
+		}).on("changeDate", onChangeDate);
+	};
+
+
+	var onChangeDate = function(e){
+		console.dir(e);
+		var selectedDate = e.date;
+		var minEpoch = Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate())/1000;
+		WhereUAtDateSlider.setSliderToDateByEpoch(minEpoch);
+	};
+
+	var setupTimeDates = function(minEpoch, maxEpoch){
+		_minDate = new Date(minEpoch);
+		_maxDate = new Date(maxEpoch);
+	};
+
+	return {
+		initialize: initialize
 	};
 })();
 
