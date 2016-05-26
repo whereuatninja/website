@@ -4,20 +4,40 @@ block content
     link(href='/css/pirate.css', rel='stylesheet')
     script(src='/scripts/bootstrap-slider.js')
     script(src='/scripts/pirate.js')
-    .container
+    .container-fluid
       .row
-        .col-lg-2.sidebar
-          ul.nav.nav-sidebar
-            if viewModel.ninjas
-              each ninja in viewModel.ninjas
-                -var liClass = (viewModel.currentNinjaId == ninja.id) ? "active" : "";
-                li(class=liClass)
-                  a(href='/pirate/' + ninja.id) #{ninja.name}
-        .col-lg-9.main
+        .col-sm-3.col-md-2.sidebar
+          ul.nav.nav-stacked
+            li.nav-header(data-toggle='collapse', data-target='#ninjaList')
+              h4
+                span
+                  | My Ninjas 
+                  span.badge 1
+              ul#ninjaList.nav.nav-list.collapse
+                if viewModel.ninjas
+                  each ninja in viewModel.ninjas
+                    li
+                      a(href='/pirate/' + ninja.id) #{ninja.name}
+                else
+                  li
+                    a(href='#') No Ninjas 
+            li.nav-header(data-toggle='collapse', data-target='#pirateList')
+              h4
+                span
+                  | My Pirates 
+                  span.badge 3
+              ul#pirateList.nav.nav-list.collapse
+                li
+                  a(href='#') Pirate1
+                li
+                  a(href='#') Pirate2
+                li
+                  a(href='#') Pirate3
+        .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
           if !viewModel.locations
             h3 No Locations Found!
           else
-            h2.sub-header My Map
+            h2.sub-header Find #{ninja.name}
             #map
             if viewModel.locations
               h2.sub-header Time Range

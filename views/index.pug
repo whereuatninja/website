@@ -1,155 +1,25 @@
 extends layout
 
 block content
-  header#myCarousel.carousel.slide
-    // Indicators
-    ol.carousel-indicators
-      li.active(data-target='#myCarousel', data-slide-to='0')
-      |             
-      li(data-target='#myCarousel', data-slide-to='1')
-      |             
-      li(data-target='#myCarousel', data-slide-to='2')
-    // Wrapper for slides
-    .carousel-inner
-      .item.active
-        .fill(style="background-image:url('images/whereuat_ninja.png');")
-        |                 
-        .carousel-caption
-          h2 AKA Where's Doug
-      |             
-      .item
-        .fill(style="background-image:url('images/slide2.png');")
-        |                 
-        .carousel-caption
-          h2 Follow Scott's adventures
-      |             
-      .item
-        .fill(style="background-image:url('images/slide3.png');")
-        |                 
-        .carousel-caption
-          h2 Mobile iOS and Android
-    // Controls
-    a.left.carousel-control(href='#myCarousel', data-slide='prev')
-      span.icon-prev
-    |         
-    a.right.carousel-control(href='#myCarousel', data-slide='next')
-      span.icon-next
   // Page Content
-  .container
-  
-    
-    // Marketing Icons Section
+  .container-fluid
     .row
-      .col-lg-12
-        h1.page-header
-          | Welcome to Modern Business
-      |             
-      .col-md-4
-        .panel.panel-default
-          .panel-heading
-            h4
-              i.fa.fa-fw.fa-check
-              |  Bootstrap v3.2.0
-          |                     
-          .panel-body
-            p
-              | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Itaque, optio corporis quae nulla aspernatur in alias at numquam rerum ea excepturi expedita tenetur assumenda voluptatibus eveniet incidunt dicta nostrum quod?
-            |                         
-            a.btn.btn-default(href='#') Learn More
-      |             
-      .col-md-4
-        .panel.panel-default
-          .panel-heading
-            h4
-              i.fa.fa-fw.fa-gift
-              |  Free &amp; Open Source
-          |                     
-          .panel-body
-            p
-              | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Itaque, optio corporis quae nulla aspernatur in alias at numquam rerum ea excepturi expedita tenetur assumenda voluptatibus eveniet incidunt dicta nostrum quod?
-            |                         
-            a.btn.btn-default(href='#') Learn More
-      |             
-      .col-md-4
-        .panel.panel-default
-          .panel-heading
-            h4
-              i.fa.fa-fw.fa-compass
-              |  Easy to Use
-          |                     
-          .panel-body
-            p
-              | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Itaque, optio corporis quae nulla aspernatur in alias at numquam rerum ea excepturi expedita tenetur assumenda voluptatibus eveniet incidunt dicta nostrum quod?
-            |                         
-            a.btn.btn-default(href='#') Learn More
-    // /.row
-    // Portfolio Section
-    .row
-      .col-lg-12
-        h2.page-header Portfolio Heading
-      |             
-      .col-md-4.col-sm-6
-        a(href='portfolio-item.html')
-          img.img-responsive.img-portfolio.img-hover(src='http://placehold.it/700x450', alt='')
-      |             
-      .col-md-4.col-sm-6
-        a(href='portfolio-item.html')
-          img.img-responsive.img-portfolio.img-hover(src='http://placehold.it/700x450', alt='')
-      |             
-      .col-md-4.col-sm-6
-        a(href='portfolio-item.html')
-          img.img-responsive.img-portfolio.img-hover(src='http://placehold.it/700x450', alt='')
-      |             
-      .col-md-4.col-sm-6
-        a(href='portfolio-item.html')
-          img.img-responsive.img-portfolio.img-hover(src='http://placehold.it/700x450', alt='')
-      |             
-      .col-md-4.col-sm-6
-        a(href='portfolio-item.html')
-          img.img-responsive.img-portfolio.img-hover(src='http://placehold.it/700x450', alt='')
-      |             
-      .col-md-4.col-sm-6
-        a(href='portfolio-item.html')
-          img.img-responsive.img-portfolio.img-hover(src='http://placehold.it/700x450', alt='')
-    // /.row
-    // Features Section
-    .row
-      .col-lg-12
-        h2.page-header Modern Business Features
-      |             
-      .col-md-6
-        p The Modern Business template by Start Bootstrap includes:
-        |                 
-        ul
-          li
-            strong Bootstrap v3.2.0
-          |                     
-          li jQuery v1.11.0
-          |                     
-          li Font Awesome v4.1.0
-          |                     
-          li Working PHP contact form with validation
-          |                     
-          li Unstyled page elements for easy customization
-          |                     
-          li 17 HTML pages
-        |                 
-        p
-          | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis, omnis doloremque non cum id reprehenderit, quisquam totam aspernatur tempora minima unde aliquid ea culpa sunt. Reiciendis quia dolorum ducimus unde.
-      |             
-      .col-md-6
-        img.img-responsive(src='http://placehold.it/700x450', alt='')
-    // /.row
-    hr
-    // Call to Action Section
-    .well
-      .row
-        .col-md-8
-          p
-            | Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias, expedita, saepe, vero rerum deleniti beatae veniam harum neque nemo praesentium cum alias asperiores commodi.
-        |                 
-        .col-md-4
-          a.btn.btn-lg.btn-default.btn-block(href='#') Call to Action
-    |    
-
-  
+      #myCarousel.carousel.slide(data-ride='carousel')
+        // Indicators
+        ol.carousel-indicators
+          li.active(data-target='#myCarousel', data-slide-to='0')
+          li(data-target='#myCarousel', data-slide-to='1')
+          li(data-target='#myCarousel', data-slide-to='2')
+        .carousel-inner(role='listbox')
+          .item.active
+            img.first-slide.img-responsive.center-block(src='/images/whereuat_ninja.png', alt='First slide')
+          .item
+            img.second-slide.img-responsive.center-block(src='/images/slide2.png', alt='Second slide')
+          .item
+            img.third-slide.img-responsive.center-block(src='/images/slide3.png', alt='Third slide')
+        a.left.carousel-control(href='#myCarousel', role='button', data-slide='prev')
+          span.glyphicon.glyphicon-chevron-left(aria-hidden='true')
+          span.sr-only Previous
+        a.right.carousel-control(href='#myCarousel', role='button', data-slide='next')
+          span.glyphicon.glyphicon-chevron-right(aria-hidden='true')
+          span.sr-only Next
