@@ -39,10 +39,10 @@ block content
                   a(href='#') Pirate3
         .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
           if !viewModel.locations
-            h3 No locations found for
+            h3 No locations found for&nbsp;
               span.name #{viewModel.ninja.name}!
           else
-            h2.sub-header Find
+            h2.sub-header Find&nbsp;
               span.name #{viewModel.ninja.name}!
             #map
             if viewModel.locations
