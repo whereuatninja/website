@@ -10,6 +10,7 @@ var passport = require('passport');
 var Auth0Strategy = require('passport-auth0');
 var jwt = require('jwt-simple');
 var request = require('request');
+var rp = require('request-promise');
 
 dotenv.load();
 
@@ -35,16 +36,23 @@ var strategy = new Auth0Strategy({
     var id_token = jwt.decode(extraParams.id_token, secret);
 
     var options = {
-      headers: {'content-type' : 'application/x-www-form-urlencoded'},
-      url: "http://node-1:3000/api/users/",
-      method: 'POST',
+      url: "http://node-1/api/ninjas",
+      method: 'GET',
+      json: true,
       auth: { bearer: extraParams.id_token }
     };
-    var requestCallback = function(error, response, body){
-    };
-    request(options, requestCallback);
 
-    return done(null, { token: extraParams.id_token, profile: profile } );
+    rp(options).then(function(ninjas){
+      console.log("after auth0 callback %j",ninjas);
+      var info = {
+        token: extraParams.id_token,
+        profile: profile,
+        ninjas: ninjas
+      };
+      return done(null, info );
+    });
+
+
   });
 
 passport.use(strategy);

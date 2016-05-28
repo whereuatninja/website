@@ -26,7 +26,7 @@ router.get('/:ninja_id', ensureLoggedIn, function(req, res, next) {
 function getLocationsByNinjaId(token, ninjaId, queryParameters){
 
     var options = {
-        url: "http://node-1:3000/api/locations/"+ninjaId,
+        url: "http://node-1/api/locations/"+ninjaId,
         qs: queryParameters,
         method: 'GET',
         json: true,

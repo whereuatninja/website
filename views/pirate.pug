@@ -16,10 +16,10 @@ block content
               h4
                 span
                   | My Ninjas 
-                  span.badge 1
+                  span.badge #{user.ninjas.length}
               ul#ninjaList.nav.nav-list.collapse
-                if viewModel.ninjas
-                  each ninja in viewModel.ninjas
+                if user.ninjas
+                  each ninja in user.ninjas
                     li
                       a(href='/pirate/' + ninja.id) #{ninja.name}
                 else
@@ -39,39 +39,43 @@ block content
                   a(href='#') Pirate3
         .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
           if !viewModel.locations
-            h3 No Locations Found!
+            h3 No locations found for
+              span.name #{viewModel.ninja.name}!
           else
-            h2.sub-header Find #{ninja.name}
+            h2.sub-header Find
+              span.name #{viewModel.ninja.name}!
             #map
             if viewModel.locations
               h2.sub-header Time Range
               div.well
+                button#button-datepicker.btn.btn-default.btn-lg(type='button', aria-label='Pick a Date') Pick a Date
+                    span.glyphicon.glyphicon-calendar(aria-hidden='true', style='padding-left: .25em')
+                button#button-filter.btn.btn-primary.btn-lg Filter
+                  span#button-filter-loader.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
+                br
                 b#slider-after-label After
                 b#slider-timezone-label TimeZone
                 b#slider-before-label Before
                 br
                 input#timeSlider(type='text')
-                br
-                button#button-datepicker.btn.btn-default.btn-lg(type='button', aria-label='Pick a Date') Pick a Date
-                    span.glyphicon.glyphicon-calendar(aria-hidden='true', style='padding-left: .25em')
-                button#button-filter.btn.btn-primary.btn-lg Filter
-                  span#button-filter-loader.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
 
             h2.sub-header Activities
             #whereubeen.table-responsive
             table#whereubeen.table.table-responsive.table-striped
               thead
                 tr
-                  th Longitude
-                  th Latitude
+                  td
                   th Time
+                  th Message
               tbody
                 each loc in viewModel.locations
-                  tr
-                    td= loc.lat
-                    td= loc.long
-                    -var time = new Date(loc.time).toUTCString();
-                    td= time
+                  if loc.message
+                    tr
+                      td
+                        button.btn.btn-default Center on Map
+                      -var time = new Date(loc.time).toUTCString();
+                      td= time
+                      td= loc.message
             div#activityLoader
               strong Loading Activities...
               span#activity-loader.glyphicon.glyphicon-refresh.glyphicon-refresh-animate

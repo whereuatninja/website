@@ -9,40 +9,39 @@ var rp = require('request-promise');
 router.get('/', ensureLoggedIn, function(req, res, next) {
   var token = req.user.token;
   var user = req.user;
-  var viewModel = {};
-  getNinjas(token)
-  .then(function(ninjas){
-    viewModel.ninjas = ninjas;
-    var ninjaId = getFirstNinja(ninjas);
-    viewModel.currentNinjaId = ninjaId;
-    return getLocationsByNinjaId(token, ninjaId);
-  })
-  .then(function(locations){
-    viewModel.locations = locations;
-     res.render('pirate', { user: user, viewModel: viewModel });
-  });
+  var ninjas = user.ninjas;
+  var ninjaId = getFirstNinja(ninjas);
+  res.redirect('/pirate/'+ninjaId);
 });
 
 router.get('/:ninja_id', ensureLoggedIn, function(req, res, next) {
   var token = req.user.token;
   var user = req.user;
+  var ninjas = user.ninjas;
   var ninjaId = req.params.ninja_id;
+  var ninja = getCurrentNinjaFromList(ninjaId, ninjas);
   var viewModel = {currentNinjaId: ninjaId};
-  getNinjas(token)
-  .then(function(ninjas){
-    viewModel.ninjas = ninjas;
-    return getLocationsByNinjaId(token, ninjaId);
-  })
+  getLocationsByNinjaId(token, ninjaId)
   .then(function(locations){
     if(locations.length > 0){
       viewModel.minSliderTime = getMinLocationTime(locations);
       viewModel.maxSliderTime = getMaxLocationTime(locations);
       viewModel.locations = locations;
-      viewModel.ninjaId = ninjaId;
     }
+    viewModel.ninjaId = ninjaId;
+    viewModel.ninja = ninja;
     res.render('pirate', { user: user, viewModel: viewModel });
   });
 });
+
+function getCurrentNinjaFromList(currentNinjaId, ninjas){
+  for(var i = 0; ninjas.length; i++){
+    if(ninjas[i].id == currentNinjaId){
+      return ninjas[i];
+    }
+  }
+  return null;
+}
 
 function getMaxLocationTime(locations){
   return locations[0].time;
@@ -61,22 +60,12 @@ function getFirstNinja(ninjas){
 
 function getLocationsByNinjaId(token, firstNinjaId){
   var options = {
-    url: "http://node-1:3000/api/locations/"+firstNinjaId,
+    url: "http://node-1/api/locations/"+firstNinjaId,
     method: 'GET',
     json: true,
     auth: { bearer: token }
   };
 
-  return rp(options).promise();
-}
-
-function getNinjas(token){
-  var options = {
-    url: "http://node-1:3000/api/ninjas",
-    method: 'GET',
-    json: true,
-    auth: { bearer: token }
-  };
   return rp(options).promise();
 }
 

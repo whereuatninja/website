@@ -165,7 +165,10 @@ var WhereUAtDateSlider = (function(){
 
 	var getPrettyTimeZone = function(date){
 		if(date){
-			return date.toString().match(/([A-Z]+[\+-][0-9]+.*)/)[1];
+			var matches = date.toString().match(/([A-Z]+[\+-][0-9]+.*)/);
+			if(matches){
+				return matches[1];
+			}
 		}
 		return "";
 	};
