@@ -73,6 +73,8 @@ block content
                   td
                   th Time
                   th Message
+                  th Neighborhood
+                  th City
               tbody
                 each loc in viewModel.locations
                   if loc.message
@@ -85,6 +87,9 @@ block content
                       -var time = new Date(loc.time).toUTCString();
                       td= time
                       td= loc.message
+                      td= loc.neighborhood
+                      td= loc.locality
+
             div#activityLoader
               strong Loading Activities...
               span#activity-loader.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
