@@ -7,12 +7,14 @@ block content
     link(href='/css/pirate.css', rel='stylesheet')
     script(src='/scripts/bootstrap-slider.js')
     script(src='/scripts/bootstrap-datepicker.js')
+    script(src='/scripts/moment.js')
+    script(src='/scripts/moment-timezone.js')
     script(src='/scripts/pirate.js')
     .container-fluid
       .row
         .col-sm-3.col-md-2.sidebar
           ul.nav.nav-stacked
-            li.nav-header(data-toggle='collapse', data-target='#ninjaList')
+            li.nav-header.clickable(data-toggle='collapse', data-target='#ninjaList')
               h4
                 span
                   | My Ninjas 
@@ -25,7 +27,7 @@ block content
                 else
                   li
                     a(href='#') No Ninjas 
-            li.nav-header(data-toggle='collapse', data-target='#pirateList')
+            li.nav-header.clickable(data-toggle='collapse', data-target='#pirateList')
               h4
                 span
                   | My Pirates 
@@ -52,6 +54,7 @@ block content
                     span.glyphicon.glyphicon-calendar(aria-hidden='true', style='padding-left: .25em')
                 button#button-filter.btn.btn-primary.btn-lg Filter
                   span#button-filter-loader.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
+                br
                 br
                 b#slider-after-label After
                 b#slider-timezone-label TimeZone

@@ -60,7 +60,7 @@ function getFirstNinja(ninjas){
 
 function getLocationsByNinjaId(token, firstNinjaId){
   var options = {
-    url: "http://node-1:3000/api/locations/"+firstNinjaId,
+    url: process.env.API_URL+"/locations/"+firstNinjaId,
     method: 'GET',
     json: true,
     auth: { bearer: token }

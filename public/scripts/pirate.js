@@ -104,8 +104,6 @@ var MapModule = (function(){
 var WhereUAtDateSlider = (function(){
 	var _slider;
 	var _sliderElemId;
-	var _minTimeDate;
-	var _maxTimeDate;
 	var _sliderStep = 3600;//seconds in an hour
 	var _minSliderEpochTime;
 	var _maxSliderEpochTime;
@@ -114,6 +112,10 @@ var WhereUAtDateSlider = (function(){
 	var _beforeLabelId;
 	var _afterLabelId;
 	var _timeZoneLabelId;
+
+	var _minMomentUtc;
+	var _maxMomentUtc;
+
 
 	var initialize = function(options){
 		_sliderElemId = options.sliderId;
@@ -139,36 +141,32 @@ var WhereUAtDateSlider = (function(){
 		var timeZoneLabel = document.getElementById(_timeZoneLabelId);
 		beforeLabel.innerHTML = getPrettyDate(_maxSliderDate);
 		afterLabel.innerHTML = getPrettyDate(_minSliderDate);
-		timeZoneLabel.innerHTML = getPrettyTimeZone(_minTimeDate);
+		timeZoneLabel.innerHTML = getPrettyTimeZone(_minMomentUtc);
 	}
 
 	var setupTimeDates = function(options){
-		_minTimeDate = new Date(options.minSliderTime);
-		_maxTimeDate = new Date(options.maxSliderTime);
+		_minMomentUtc = moment.utc(options.minSliderTime);
+		_maxMomentUtc = moment.utc(options.maxSliderTime);
 		setupMinMaxSliderDates();
 	};
 
 	var setupMinMaxSliderDates = function(){
-		_minSliderDate = new Date(_minTimeDate.getFullYear(), _minTimeDate.getMonth(), _minTimeDate.getDate(), 0, 0);
-		_maxSliderDate = new Date(_maxTimeDate.getFullYear(), _maxTimeDate.getMonth(), _maxTimeDate.getDate(), 24, 00);
-		_minSliderEpochTime = getUtcEpochTimeFromDate(_minSliderDate);
-		_maxSliderEpochTime = getUtcEpochTimeFromDate(_maxSliderDate);
+		_minSliderDate = moment.utc(_minMomentUtc).add(1, 'days').hour(0).minute(0).second(0);
+		_maxSliderDate = moment.utc(_maxMomentUtc).hour(0).minute(0).second(0);
+		_minSliderEpochTime = _minSliderDate.valueOf()/1000;
+		_maxSliderEpochTime = _maxSliderDate.valueOf()/1000;
 	};
 
-	var getUtcEpochTimeFromDate = function (dateObj){
-		return Date.UTC(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate(), dateObj.getHours(), dateObj.getSeconds())/1000;
-	};
-
-	var getEpochTimeFromDate = function(dateObj){
-		return Date.UTC(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate(), 23, 59);
-	};
-
-	var getPrettyTimeZone = function(date){
-		if(date){
+	var getPrettyTimeZone = function(momentDate){
+		/*if(date){
 			var matches = date.toString().match(/([A-Z]+[\+-][0-9]+.*)/);
 			if(matches){
 				return matches[1];
 			}
+		}
+		return "";*/
+		if(momentDate){
+			return "Times displayed in "+momentDate.format("z ZZ");
 		}
 		return "";
 	};

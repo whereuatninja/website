@@ -28,3 +28,8 @@
   text-align: center;
   display: none;
 }
+
+.clickable{
+  cursor: hand;
+  cursor: pointer;
+}

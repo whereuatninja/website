@@ -36,7 +36,7 @@ var strategy = new Auth0Strategy({
     var id_token = jwt.decode(extraParams.id_token, secret);
 
     var options = {
-      url: "http://node-1:3000/api/ninjas",
+      url: process.env.API_URL+"/ninjas",
       method: 'GET',
       json: true,
       auth: { bearer: extraParams.id_token }
