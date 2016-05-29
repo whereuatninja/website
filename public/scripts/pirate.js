@@ -107,13 +107,13 @@ var WhereUAtDateSlider = (function(){
 	var _sliderStep = 3600*12;//seconds in an hour*half a day of hours
 	var _minSliderEpochTime;
 	var _maxSliderEpochTime;
-	var _minSliderDate;
-	var _maxSliderDate;
+	var _minSliderDate;//This is the date shown on the left hand of the slider, min date truncated to midnight
+	var _maxSliderDate;//This is the date shown on the right of the slider, added a day and truncated to midnight
 	var _beforeLabelId;
 	var _afterLabelId;
 	var _timeZoneLabelId;
 
-	var _minMomentUtc;
+	var _minMomentUtc;//actual moment obj converted to UTC from time passed into module
 	var _maxMomentUtc;
 
 
