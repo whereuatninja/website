@@ -151,8 +151,8 @@ var WhereUAtDateSlider = (function(){
 	};
 
 	var setupMinMaxSliderDates = function(){
-		_minSliderDate = moment.utc(_minMomentUtc).add(1, 'days').hour(0).minute(0).second(0);
-		_maxSliderDate = moment.utc(_maxMomentUtc).hour(0).minute(0).second(0);
+		_maxSliderDate = moment.utc(_maxMomentUtc).add(1, 'days').hour(0).minute(0).second(0);
+		_minSliderDate = moment.utc(_minMomentUtc).hour(0).minute(0).second(0);
 		_minSliderEpochTime = _minSliderDate.valueOf()/1000;
 		_maxSliderEpochTime = _maxSliderDate.valueOf()/1000;
 	};
