@@ -104,7 +104,7 @@ var MapModule = (function(){
 var WhereUAtDateSlider = (function(){
 	var _slider;
 	var _sliderElemId;
-	var _sliderStep = 3600;//seconds in an hour
+	var _sliderStep = 3600*12;//seconds in an hour*half a day of hours
 	var _minSliderEpochTime;
 	var _maxSliderEpochTime;
 	var _minSliderDate;
@@ -158,13 +158,6 @@ var WhereUAtDateSlider = (function(){
 	};
 
 	var getPrettyTimeZone = function(momentDate){
-		/*if(date){
-			var matches = date.toString().match(/([A-Z]+[\+-][0-9]+.*)/);
-			if(matches){
-				return matches[1];
-			}
-		}
-		return "";*/
 		if(momentDate){
 			return "Times displayed in "+momentDate.format("z ZZ");
 		}
@@ -176,8 +169,6 @@ var WhereUAtDateSlider = (function(){
 	};
 
 	var toolTipFormatter = function(sliderEpochValues){
-		//var afterToolTipDate = new Date(sliderEpochValues[0]*1000);
-		//var beforeToolTipDate = new Date(sliderEpochValues[1]*1000);
 		var afterToolTipDate = new Date(0);
 		afterToolTipDate.setUTCSeconds(sliderEpochValues[0]);
 		var beforeToolTipDate = new Date(0);
