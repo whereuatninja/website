@@ -41,8 +41,11 @@ block content
                   a(href='#') Pirate3
         .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
           if !viewModel.locations
-            h3 No locations found for&nbsp;
-              span.name #{viewModel.ninja.name}!
+            if viewModel.ninja
+              h3 No locations found for&nbsp;
+                span.name #{viewModel.ninja.name}
+            else
+              h3 Hmmm... you don't seem to have any friends to follow :(
           else
             h2.sub-header Find&nbsp;
               span.name #{viewModel.ninja.name}!

@@ -36,23 +36,29 @@ var strategy = new Auth0Strategy({
     var id_token = jwt.decode(extraParams.id_token, secret);
 
     var options = {
-      url: process.env.API_URL+"/ninjas",
-      method: 'GET',
-      json: true,
+      headers: {'content-type' : 'application/x-www-form-urlencoded'},
+      url: process.env.API_URL+"/users",
+      method: 'POST',
       auth: { bearer: extraParams.id_token }
     };
-
-    rp(options).then(function(ninjas){
-      console.log("after auth0 callback %j",ninjas);
-      var info = {
-        token: extraParams.id_token,
-        profile: profile,
-        ninjas: ninjas
+    rp(options).then(function(){
+      //user should be created at this point if they werent already
+      var options = {
+        url: process.env.API_URL+"/ninjas",
+        method: 'GET',
+        json: true,
+        auth: { bearer: extraParams.id_token }
       };
-      return done(null, info );
+
+      rp(options).then(function(ninjas){
+        var info = {
+          token: extraParams.id_token,
+          profile: profile,
+          ninjas: ninjas
+        };
+        return done(null, info);
+      });
     });
-
-
   });
 
 passport.use(strategy);
