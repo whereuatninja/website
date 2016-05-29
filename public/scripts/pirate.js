@@ -1,7 +1,8 @@
 
 var MapModule = (function(){
 	var _locations;
-	var _googleMapsLatLng = [];
+	var _googleMapsLatLngLocations = [];
+	var _googleMapsActivities = [];
 	var _map;
 	var _polyLine;
 	var _currentLocationMarker;
@@ -9,24 +10,26 @@ var MapModule = (function(){
 	var initialize = function(mapElem, locations){
 		setLocations(locations);
 		_initializeMap(mapElem);
-		drawPolyLine(_googleMapsLatLng);
-		centerMap(_googleMapsLatLng);
+		drawPolyLine(_googleMapsLatLngLocations);
+		drawActivities(_googleMapsActivities);
+		centerMap(_googleMapsLatLngLocations);
 		addMarkerAtMostRecentPosition();
 	};
 
 	var setLocations = function(locations){
 		_locations = locations;
-		_googleMapsLatLng = _getGoogleMapsLatLng(locations);
+		_googleMapsLatLngLocations = _getGoogleMapsLatLngLocations(locations);
+		_googleMapsActivities = _getGoogleMapsActivities(locations);
 	};
 
 	var redraw = function(){
 		_polyLine.setMap(null);
 		_currentLocationMarker.setMap(null);
-		drawPolyLine(_googleMapsLatLng);
-		centerMap(_googleMapsLatLng);
+		drawPolyLine(_googleMapsLatLngLocations);
+		centerMap(_googleMapsLatLngLocations);
 	};
 
-	var _getGoogleMapsLatLng = function(locations){
+	var _getGoogleMapsLatLngLocations = function(locations){
 		var googleMapsLatLng = [];
 		locations.forEach(function(loc){
 			googleMapsLatLng.push(new google.maps.LatLng(loc.lat, loc.long));
@@ -34,8 +37,39 @@ var MapModule = (function(){
 		return googleMapsLatLng;
 	};
 
+	var _getGoogleMapsActivities = function(locations){
+		var googleMapsActivities = [];
+		locations.forEach(function(loc){
+			if(loc.message){
+
+				googleMapsActivities.push(
+					createClickableMarker(loc)
+				);
+			}
+		});
+		return googleMapsActivities;
+	};
+
+	var createClickableMarker = function(loc){
+		var marker = new google.maps.Marker({
+			position: {lat: loc.lat, lng: loc.long},
+			title: loc.message
+		});
+
+		google.maps.event.addListener(marker, 'click', (function(marker) {
+			var infowindow = new google.maps.InfoWindow({
+				maxWidth: 160
+			});
+			return function() {
+				infowindow.setContent(loc.message);
+				infowindow.open(_map, marker);
+			}
+		})(marker));
+		return marker;
+	};
+
 	var addMarkerAtMostRecentPosition = function(){
-		var mostRecentPosition = _googleMapsLatLng[_googleMapsLatLng.length-1];
+		var mostRecentPosition = _googleMapsLatLngLocations[_googleMapsLatLngLocations.length-1];
 		_currentLocationMarker = addMarker(mostRecentPosition, "We\'re here right now!");
 	};
 
@@ -61,7 +95,7 @@ var MapModule = (function(){
 	var _initializeMap = function(mapElem){
 		_map = new google.maps.Map(mapElem, {
 		    zoom: 10,
-		    center: _googleMapsLatLng[_googleMapsLatLng.length-1],
+		    center: _googleMapsLatLngLocations[_googleMapsLatLngLocations.length-1],
 		    mapTypeId: google.maps.MapTypeId.ROADMAP,
 		    mapTypeControl: false,
 		    streetViewControl: false,
@@ -75,13 +109,19 @@ var MapModule = (function(){
 	var drawPolyLine = function(googleMapsLatLng){
 		_polyLine = new google.maps.Polyline({
 			path: googleMapsLatLng,
-    	geodesic: true,
-    	strokeColor: '#FF0000',
-    	strokeOpacity: 1.0,
-    	strokeWeight: 2
+			geodesic: true,
+			strokeColor: '#FF0000',
+			strokeOpacity: 1.0,
+			strokeWeight: 2
 		});
 		_polyLine.setMap(_map);
-	}
+	};
+
+	var drawActivities = function(googleMapsActivities){
+		googleMapsActivities.forEach(function(marker){
+			marker.setMap(_map);
+		});
+	};
 
 	var centerMap = function(googleMapsLatLng){
 		//  Create a new viewpoint bound
@@ -91,13 +131,26 @@ var MapModule = (function(){
 		})
 		//  Fit these bounds to the map
 		_map.fitBounds(bounds);
+		console.log("zoom: "+_map.getZoom());
+	};
+
+	var centerMapByLatLong = function(lat, long){
+		var position = new google.maps.LatLng(lat, long);
+		var googleMapsLatLong = [position];
+		centerMap(googleMapsLatLong);
+		setZoom(16);
+	};
+
+	var setZoom = function(zoomLevel){
+		_map.setZoom(zoomLevel);
 	};
 
 	return {
 		initialize: initialize,
 		drawPolyLine: drawPolyLine,
 		setLocations: setLocations,
-		redraw: redraw
+		redraw: redraw,
+		centerMapByLatLong: centerMapByLatLong
 	};
 })();
 
@@ -323,4 +376,15 @@ var LoaderButton = function(id){
 		hideLoading: hideLoading,
 		get: get
 	};
-}
+};
+
+$(document).ready(function(){
+	$(".centerActivity").on("submit", function(e){
+		e.stopImmediatePropagation();
+		var $form = $(this);
+		var lat = $form.children("[name=lat]").val();
+		var long = $form.children("[name=long]").val();
+		MapModule.centerMapByLatLong(lat, long);
+		return false;
+	});
+});

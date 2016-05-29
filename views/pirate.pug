@@ -78,7 +78,10 @@ block content
                   if loc.message
                     tr
                       td
-                        button.btn.btn-default Center on Map
+                        form.centerActivity
+                          input(type="hidden", name="lat", value=loc.lat)
+                          input(type="hidden", name="long", value=loc.long)
+                          button.btn.btn-default Center on Map
                       -var time = new Date(loc.time).toUTCString();
                       td= time
                       td= loc.message
