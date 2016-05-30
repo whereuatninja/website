@@ -135,7 +135,7 @@
   margin-top: -36px;
 }
 .slider .tooltip-inner {
-  white-space: nowrap;
+  white-space: normal;
   max-width: none;
 }
 .slider .hide {

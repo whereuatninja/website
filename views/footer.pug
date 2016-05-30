@@ -1,18 +1,17 @@
 hr
 // Footer
 footer
-.container
+.container-fluid
   .row
-  .col-lg-12
-  p.text-center Copyright &copy; WhereUAt.ninja
+    .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
+      p.text-center Copyright &copy; WhereUAt.ninja
 
-block footer
-    //
-      Bootstrap core JavaScript
-      ==================================================
-    // Placed at the end of the document so the pages load faster
-    script.
-      window.jQuery || document.write('<script src="/scripts/jquery.min.js"><\\/script>')
-    script(src='/scripts/bootstrap.min.js')
-    // IE10 viewport hack for Surface/desktop Windows 8 bug
-    script(src='/scripts/ie10-viewport-bug-workaround.js')
+  //
+    Bootstrap core JavaScript
+    ==================================================
+  // Placed at the end of the document so the pages load faster
+  script.
+    window.jQuery || document.write('<script src="/scripts/jquery.min.js"><\\/script>')
+  script(src='/scripts/bootstrap.min.js')
+  // IE10 viewport hack for Surface/desktop Windows 8 bug
+  script(src='/scripts/ie10-viewport-bug-workaround.js')
