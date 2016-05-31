@@ -1,6 +1,19 @@
 each loc in locations
   if loc.message
     tr
-      -var time = new Date(loc.time).toUTCString();
-      td= time
+      td
+        form.centerActivity
+          input(type="hidden", name="lat", value=loc.lat)
+          input(type="hidden", name="long", value=loc.long)
+          button.btn.btn-default Center on Map
+      - var time = new Date(loc.time).toUTCString();
+      - var fromNow = moment(loc.time).fromNow();
+      td #{time}(#{fromNow})
       td= loc.message
+      td= loc.neighborhood
+      td= loc.locality
+      td
+        if loc.twitterUrl
+          form.twitter
+            input(type='hidden',name='twitterUrl', value=loc.twitterUrl)
+          div.twitterHolder

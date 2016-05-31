@@ -5,12 +5,14 @@ var MapModule = (function(){
 	var _googleMapsActivities = [];
 	var _map;
 	var _polyLine;
+	var _groupedLocations = [];
 	var _currentLocationMarker;
 
 	var initialize = function(mapElem, locations){
 		setLocations(locations);
 		_initializeMap(mapElem);
-		drawPolyLine(_googleMapsLatLngLocations);
+		_drawLocations(_groupedLocations);
+		//drawPolyLine(_googleMapsLatLngLocations);
 		drawActivities(_googleMapsActivities);
 		centerMap(_googleMapsLatLngLocations);
 		addMarkerAtMostRecentPosition();
@@ -18,6 +20,7 @@ var MapModule = (function(){
 
 	var setLocations = function(locations){
 		_locations = locations;
+		_groupedLocations = _getGroupedLocations(_locations);
 		_googleMapsLatLngLocations = _getGoogleMapsLatLngLocations(locations);
 		_googleMapsActivities = _getGoogleMapsActivities(locations);
 	};
@@ -25,7 +28,8 @@ var MapModule = (function(){
 	var redraw = function(){
 		_polyLine.setMap(null);
 		_currentLocationMarker.setMap(null);
-		drawPolyLine(_googleMapsLatLngLocations);
+		//drawPolyLine(_googleMapsLatLngLocations);
+		_drawLocations(_groupedLocations);
 		centerMap(_googleMapsLatLngLocations);
 	};
 
@@ -35,6 +39,29 @@ var MapModule = (function(){
 			googleMapsLatLng.push(new google.maps.LatLng(loc.lat, loc.long));
 		});
 		return googleMapsLatLng;
+	};
+
+	var _getGroupedLocations = function(locations){
+		if(locations.length == 0) return [];
+		var groupings = [];
+		var currentGroup = [locations[0]];//prime with first location
+		var lastTimeMoment = moment.utc(locations[0].time);
+		locations.forEach(function(loc){
+			var currTime = moment.utc(loc.time);
+			var diffHours = lastTimeMoment.diff(currTime, 'hours');
+			if(diffHours > 2){
+				groupings.push(currentGroup);
+				currentGroup = [loc];
+			}
+			else{
+				currentGroup.push(loc);
+			}
+			lastTimeMoment = currTime;
+		});
+		if(currentGroup.length > 0){
+			groupings.push(currentGroup);
+		}
+		return groupings;
 	};
 
 	var _getGoogleMapsActivities = function(locations){
@@ -106,13 +133,28 @@ var MapModule = (function(){
 		});
 	};
 
+	var _convertArrayToLatLngArray = function(locations){
+		var latLngArray = [];
+		locations.forEach(function(loc){
+			latLngArray.push(new google.maps.LatLng(loc.lat, loc.long));
+		});
+		return latLngArray;
+	};
+
+	var _drawLocations = function(groupedLocations){
+		groupedLocations.forEach(function(group){
+			var latLngGroup = _convertArrayToLatLngArray(group);
+			drawPolyLine(latLngGroup);
+		});
+	};
+
 	var drawPolyLine = function(googleMapsLatLng){
 		_polyLine = new google.maps.Polyline({
 			path: googleMapsLatLng,
 			geodesic: true,
 			strokeColor: '#FF0000',
 			strokeOpacity: 1.0,
-			strokeWeight: 2
+			strokeWeight: 3
 		});
 		_polyLine.setMap(_map);
 	};
@@ -250,9 +292,9 @@ var LocationDatePicker = (function(){
 	var _minDate;
 	var _maxDate;
 
-	var initialize = function(minEpoch, maxEpoch){
+	var initialize = function(minLocationTimeUtc, maxLocationTimeUtc){
 		_button = document.getElementById("button-datepicker");
-		setupTimeDates(minEpoch, maxEpoch);
+		setupTimeDates(minLocationTimeUtc, maxLocationTimeUtc);
 		setupDatePicker();
 	};
 
@@ -272,9 +314,12 @@ var LocationDatePicker = (function(){
 		WhereUAtDateSlider.setSliderToDateByEpoch(minEpoch);
 	};
 
-	var setupTimeDates = function(minEpoch, maxEpoch){
-		_minDate = new Date(minEpoch);
-		_maxDate = new Date(maxEpoch);
+	var setupTimeDates = function(minLocationTimeUtc, maxLocationTimeUtc){
+		var minMomentUtc = moment.utc(minLocationTimeUtc);
+		var maxMomentUtc = moment.utc(maxLocationTimeUtc);
+		//chop off hours, min, seconds so when JS converts to local TZ, it doesnt try to +/- day of month
+		_minDate = new Date(minMomentUtc.year(), minMomentUtc.month(), minMomentUtc.date());
+		_maxDate = new Date(maxMomentUtc.year(), maxMomentUtc.month(), maxMomentUtc.date());
 	};
 
 	return {
@@ -346,6 +391,34 @@ var LocationLoader = (function(){
 	};
 })();
 
+var TwitterLoader = (function () {
+	var initialize = function(){
+		loadEmbendedTweets();
+	};
+
+	var loadEmbendedTweets = function(){
+		$("#whereubeen form.twitter").each(function(){
+			var $form = $(this);
+			var $formContainer = $form.parent();
+			var $twitterHolder = $formContainer.children(".twitterHolder");
+			var twitterUrl = $form.children("[name=twitterUrl]").val();
+			var $promise = $.ajax({
+				url: "/twitter/embeddedTweet?url="+twitterUrl,
+				method: "GET",
+				dataType: "json"
+			});
+
+			$promise.done(function(twitterJson){
+				$twitterHolder.html(twitterJson.html);
+			});
+		});
+	};
+
+	return {
+		initialize: initialize
+	};
+})();
+
 var LoaderButton = function(id){
 	var _id;
 	var _$elem;
@@ -379,7 +452,7 @@ var LoaderButton = function(id){
 };
 
 $(document).ready(function(){
-	$(".centerActivity").on("submit", function(e){
+	$(document).on("submit", ".centerActivity", function(e){
 		e.stopImmediatePropagation();
 		var $form = $(this);
 		var lat = $form.children("[name=lat]").val();
@@ -387,4 +460,6 @@ $(document).ready(function(){
 		MapModule.centerMapByLatLong(lat, long);
 		return false;
 	});
+
+	TwitterLoader.initialize();
 });

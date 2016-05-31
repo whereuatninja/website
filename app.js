@@ -20,6 +20,7 @@ var pirate = require('./routes/pirate');
 var about = require('./routes/about');
 var contact = require('./routes/contact');
 var locations = require('./routes/locations');
+var twitter = require('./routes/twitter');
 
 // This will configure Passport to use Auth0
 var strategy = new Auth0Strategy({
@@ -75,6 +76,7 @@ passport.deserializeUser(function(user, done) {
 var app = express();
 
 app.locals.env = app.settings.env;
+app.locals.moment = require('moment');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -101,6 +103,7 @@ app.use('/pirate', pirate);
 app.use('/about', about);
 app.use('/contact', contact);
 app.use('/locations', locations);
+app.use('/twitter', twitter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
