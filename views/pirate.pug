@@ -58,6 +58,10 @@ block content
                     span.glyphicon.glyphicon-calendar(aria-hidden='true', style='padding-left: .25em')
                 button#button-filter.btn.btn-primary.btn-lg Filter
                   span#button-filter-loader.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
+                button#button-play.btn.btn-default.btn-lg Play
+                  span.glyphicon.glyphicon-play
+                span#play-information
+                  b (Time goes here)
                 br
                 br
                 b#slider-after-label After
@@ -78,25 +82,8 @@ block content
                   th City
                   th Twitter Post
               tbody
-                each loc in viewModel.locations
-                  if loc.message
-                    tr
-                      td
-                        form.centerActivity
-                          input(type="hidden", name="lat", value=loc.lat)
-                          input(type="hidden", name="long", value=loc.long)
-                          button.btn.btn-default Center on Map
-                      - var time = new Date(loc.time).toUTCString();
-                      - var fromNow = moment(loc.time).fromNow();
-                      td #{time}(#{fromNow})
-                      td= loc.message
-                      td= loc.neighborhood
-                      td= loc.locality
-                      td
-                        if loc.twitterUrl
-                          form.twitter
-                            input(type='hidden',name='twitterUrl', value=loc.twitterUrl)
-                          div.twitterHolder
+                - var locations = viewModel.locations;
+                include locationlist
 
             div#activityLoader
               strong Loading Activities...

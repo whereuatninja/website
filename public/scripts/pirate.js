@@ -2,33 +2,35 @@
 var MapModule = (function(){
 	var _locations;
 	var _googleMapsLatLngLocations = [];
-	var _googleMapsActivities = [];
+	var _activities;
 	var _map;
-	var _polyLine;
+	var _polyLines = [];
+	var _markers = [];
 	var _groupedLocations = [];
 	var _currentLocationMarker;
+
+	var _groupedLocationsIndex;
+	var _locationsIndex;
+
 
 	var initialize = function(mapElem, locations){
 		setLocations(locations);
 		_initializeMap(mapElem);
 		_drawLocations(_groupedLocations);
-		//drawPolyLine(_googleMapsLatLngLocations);
-		drawActivities(_googleMapsActivities);
+		//drawActivities(_googleMapsActivities);
+		_drawActivities(_activities);
 		centerMap(_googleMapsLatLngLocations);
-		addMarkerAtMostRecentPosition();
+		addMarkerAtMostRecentPosition(locations);
 	};
 
 	var setLocations = function(locations){
 		_locations = locations;
-		_groupedLocations = _getGroupedLocations(_locations);
+		_groupedLocations = _getGroupedLocations(locations);
 		_googleMapsLatLngLocations = _getGoogleMapsLatLngLocations(locations);
-		_googleMapsActivities = _getGoogleMapsActivities(locations);
+		_activities = _getActivities(locations);
 	};
 
 	var redraw = function(){
-		_polyLine.setMap(null);
-		_currentLocationMarker.setMap(null);
-		//drawPolyLine(_googleMapsLatLngLocations);
 		_drawLocations(_groupedLocations);
 		centerMap(_googleMapsLatLngLocations);
 	};
@@ -64,68 +66,48 @@ var MapModule = (function(){
 		return groupings;
 	};
 
-	var _getGoogleMapsActivities = function(locations){
-		var googleMapsActivities = [];
+	var _getActivities = function(locations){
+		var activities = [];
 		locations.forEach(function(loc){
 			if(loc.message){
-
-				googleMapsActivities.push(
-					createClickableMarker(loc)
-				);
+				activities.push(loc);
 			}
 		});
-		return googleMapsActivities;
+		return activities;
 	};
 
-	var createClickableMarker = function(loc){
+	var createClickableMarker = function(loc, message){
+		var fromNow = "<b>("+moment(loc.time).fromNow()+")</b>";
+		var title = fromNow+"<br>"+(message || "")+(loc.message||"");
 		var marker = new google.maps.Marker({
 			position: {lat: loc.lat, lng: loc.long},
-			title: loc.message
+			title: title
 		});
 
 		google.maps.event.addListener(marker, 'click', (function(marker) {
 			var infowindow = new google.maps.InfoWindow({
-				maxWidth: 160
+				//maxWidth: 160
 			});
 			return function() {
-				infowindow.setContent(loc.message);
+				infowindow.setContent(title);
 				infowindow.open(_map, marker);
 			}
 		})(marker));
 		return marker;
 	};
 
-	var addMarkerAtMostRecentPosition = function(){
-		var mostRecentPosition = _googleMapsLatLngLocations[_googleMapsLatLngLocations.length-1];
-		_currentLocationMarker = addMarker(mostRecentPosition, "We\'re here right now!");
-	};
-
-	var addMarker = function(googleMapsLatLng, content){
-		var marker = new google.maps.Marker({
-			position: googleMapsLatLng,
-			map: _map,
-			title: 'We\'re here right now!'
-		});
-
-		google.maps.event.addListener(marker, 'click', (function(marker) {
-				var infowindow = new google.maps.InfoWindow({
-					  maxWidth: 160
-				});
-			return function() {
-				infowindow.setContent(content);
-				infowindow.open(_map, marker);
-			}
-		})(marker));
-		return marker;
+	var addMarkerAtMostRecentPosition = function(locations){
+		var mostRecentLocation = locations[locations.length-1];
+		_currentLocationMarker = createClickableMarker(mostRecentLocation, "We're here right now! ");
 	};
 
 	var _initializeMap = function(mapElem){
 		_map = new google.maps.Map(mapElem, {
 		    zoom: 10,
-		    center: _googleMapsLatLngLocations[_googleMapsLatLngLocations.length-1],
+		    //center: _googleMapsLatLngLocations[_googleMapsLatLngLocations.length-1],
 		    mapTypeId: google.maps.MapTypeId.ROADMAP,
-		    mapTypeControl: false,
-		    streetViewControl: false,
+		    mapTypeControl: true,
+		    streetViewControl: true,
 		    panControl: false,
 		    zoomControlOptions: {
 		    	position: google.maps.ControlPosition.LEFT_BOTTOM
@@ -149,19 +131,22 @@ var MapModule = (function(){
 	};
 
 	var drawPolyLine = function(googleMapsLatLng){
-		_polyLine = new google.maps.Polyline({
+		var currentPolyLine = new google.maps.Polyline({
 			path: googleMapsLatLng,
 			geodesic: true,
 			strokeColor: '#FF0000',
 			strokeOpacity: 1.0,
 			strokeWeight: 3
 		});
-		_polyLine.setMap(_map);
+		currentPolyLine.setMap(_map);
+		_polyLines.push(currentPolyLine);
 	};
 
-	var drawActivities = function(googleMapsActivities){
-		googleMapsActivities.forEach(function(marker){
+	var _drawActivities = function(activities){
+		activities.forEach(function(activity){
+			var marker = createClickableMarker(activity);
 			marker.setMap(_map);
+			_markers.push(marker);
 		});
 	};
 
@@ -170,10 +155,9 @@ var MapModule = (function(){
 		var bounds = new google.maps.LatLngBounds();
 		googleMapsLatLng.forEach(function(position){
 			bounds.extend(position);
-		})
+		});
 		//  Fit these bounds to the map
 		_map.fitBounds(bounds);
-		console.log("zoom: "+_map.getZoom());
 	};
 
 	var centerMapByLatLong = function(lat, long){
@@ -187,19 +171,100 @@ var MapModule = (function(){
 		_map.setZoom(zoomLevel);
 	};
 
+	var _clearMap = function(){
+		_polyLines.forEach(function(polyline){
+			polyline.setMap(null);
+		});
+
+		_markers.forEach(function(marker){
+			marker.setMap(null);
+		});
+	};
+
+	var play = function(){
+		_clearMap();
+		_groupedLocationsIndex = 0;
+		_locationsIndex = _locations.length-1;
+
+		playAnimation();
+	};
+
+	var playAnimation = function(groupIndex){
+		if(groupIndex == null){
+			groupIndex = _groupedLocations.length-1;
+		}
+		else if(groupIndex <= 0){
+			console.log("Im done playing");
+			return;
+		}
+		console.log("Group index: "+groupIndex);
+		var index = _groupedLocations[groupIndex].length-1;
+		_playLocationGroup(null, null, groupIndex, index);
+	};
+
+	var _playLocationGroup = function(polyLine, markers, groupIndex, index){
+		if(!polyLine){
+			var _latlngFromGroup = _convertArrayToLatLngArray(_groupedLocations[groupIndex]);
+			centerMap(_latlngFromGroup);
+			polyLine = new google.maps.Polyline({
+				geodesic: true,
+				strokeColor: '#FF0000',
+				strokeOpacity: 1.0,
+				strokeWeight: 3,
+				map: _map
+			});
+			markers = [];
+		}
+		var currentLocation = _groupedLocations[groupIndex][index];
+		var path = polyLine.getPath();
+		var newPosition = new google.maps.LatLng(currentLocation.lat, currentLocation.long);
+		path.push(newPosition);
+		var fromNow = moment.utc(currentLocation.time).fromNow();
+		var time = moment.utc(currentLocation.time).format("MMM DD YYYY hh:mm A");
+		$("#play-information b").text("("+fromNow+") " + time);
+
+		if(currentLocation.message){
+			var titleFromNow = "<b>("+moment(currentLocation.time).fromNow()+")</b>";
+			var title = titleFromNow+"<br>"+(currentLocation.message||"");
+			var infowindow = new google.maps.InfoWindow({
+				content: title
+			});
+			var marker = new google.maps.Marker({
+				position: newPosition,
+				title: title
+			});
+			marker.setMap(_map);
+			infowindow.open(_map, marker);
+
+			markers.push(marker);
+		}
+
+		if(--index > 0){
+			setTimeout(function(){
+				_playLocationGroup(polyLine, markers, groupIndex, index);
+			}, 500);
+		}
+		else{
+			console.log("Im done playing the group");
+			_polyLines.push(polyLine);
+			playAnimation(--groupIndex);
+		}
+	}
+
 	return {
 		initialize: initialize,
 		drawPolyLine: drawPolyLine,
 		setLocations: setLocations,
 		redraw: redraw,
-		centerMapByLatLong: centerMapByLatLong
+		centerMapByLatLong: centerMapByLatLong,
+		play: play
 	};
 })();
 
 var WhereUAtDateSlider = (function(){
 	var _slider;
 	var _sliderElemId;
-	var _sliderStep = 3600*12;//seconds in an hour*half a day of hours
+	var _sliderStep = 3600*24;//seconds in an hour*half a day of hours
 	var _minSliderEpochTime;
 	var _maxSliderEpochTime;
 	var _minSliderDate;//This is the date shown on the left hand of the slider, min date truncated to midnight
@@ -260,7 +325,8 @@ var WhereUAtDateSlider = (function(){
 	};
 
 	var getPrettyDate = function(date){
-		return date.toLocaleString();
+		return moment(date).format("MMM Do YYYY");
+		//return date.toLocaleString();
 	};
 
 	var toolTipFormatter = function(sliderEpochValues){
@@ -268,7 +334,7 @@ var WhereUAtDateSlider = (function(){
 		afterToolTipDate.setUTCSeconds(sliderEpochValues[0]);
 		var beforeToolTipDate = new Date(0);
 		beforeToolTipDate.setUTCSeconds(sliderEpochValues[1]);
-		return "Show locations from: "+afterToolTipDate.toUTCString()+" to: "+ beforeToolTipDate.toUTCString();
+		return ""+moment(afterToolTipDate).format("MMM Do YYYY")+" - "+moment(beforeToolTipDate).format("MMM Do YYYY");
 	};
 
 	var getSliderValues = function(){
@@ -379,10 +445,11 @@ var LocationLoader = (function(){
 			MapModule.setLocations(response.locations);
 			MapModule.redraw();
 			_$locationTbody.html(response.locationListHtml);
+			TwitterLoader.initialize();
 		});
 
 		$promise.fail(function(){
-			alert("Ahhhh crap that didn't work...")
+			alert("Ahhhh crap that didn't work...You might need to log out and log back in.")
 		});
 	};
 
@@ -462,4 +529,8 @@ $(document).ready(function(){
 	});
 
 	TwitterLoader.initialize();
+
+	$("#button-play").on("click", function(){
+		MapModule.play();
+	});
 });

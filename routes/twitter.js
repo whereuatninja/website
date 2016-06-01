@@ -17,12 +17,14 @@ router.get('/embeddedTweet', ensureLoggedIn, function(req, res, next) {
         json: true
     };
 
-    console.log(options.url);
-
-    rp(options).then(function(twitterJson){
-        console.log("Did I get here?");
-        res.json(twitterJson);
-    });
+    rp(options)
+        .then(function(twitterJson){
+            res.json(twitterJson);
+        })
+        .catch(function(err){
+            console.log("twitter error %j", err);
+            res.json({});
+        });
 });
 
 module.exports = router;
