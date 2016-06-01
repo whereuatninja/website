@@ -1,78 +1,51 @@
 // Navigation
-nav.navbar.navbar-inverse.navbar-fixed-top(role='navigation')
-  .container-fluid
-    // Brand and toggle get grouped for better mobile display
-    .navbar-header
-      button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#navbar', aria-expanded='false', aria-controls='navbar')
-        span.sr-only Toggle navigation
-        span.icon-bar
-        span.icon-bar
-        span.icon-bar
-      a.navbar-brand(href='/') Whereu @ Ninja?
-    // Collect the nav links, forms, and other content for toggling
-    #navbar.navbar-collapse.collapse
-      ul.nav.navbar-nav.navbar-right
-        if user
-          li.dropdown
-            a.dropdown-toggle(href='#', data-toggle='dropdown') Ninjas
-            ul.dropdown-menu
-              if user.ninjas
-                each ninja in user.ninjas
-                  li
-                    a(href='/pirate/' + ninja.id)
-                      span.name #{ninja.name}
-                else
-                  li
-                    a(href='#') No Ninjas
-
-          li.hidden-md.hidden-lg(data-toggle='collapse', data-target='#ninjaListMobile')
-            a(href='#') My Ninjas
-            ul#ninjaListMobile.nav.nav-list.collapse
-              if user.ninjas
-                each ninja in user.ninjas
-                  li
-                    a(href='/pirate/' + ninja.id)
-                      span.name #{ninja.name}
+nav.navbar.navbar-dark.navbar-fixed-top.bg-inverse(role='navigation')
+  button.navbar-toggler.hidden-lg-up.pull-xs-left(type='button', data-toggle='collapse', data-target='#collapsing-navbar')
+    | ☰
+  a.navbar-brand.pull-xs-right.pull-lg-left(href='#') WhereU @ Ninja?
+  #collapsing-navbar.collapse.navbar-toggleable-md
+    ul.nav.navbar-nav.pull-lg-right
+      li.nav-item
+        a.nav-link(href='#')
+          span.sr-only (current)
+      if user
+        li.nav-item.dropdown.nav-item-first-item
+          a.nav-link.dropdown-toggle(data-target='#', href='#', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+            span.fa.fa-user.fa-fw(aria-hidden="true")
+            span.name #{user.profile.displayName}
+          .dropdown-menu(aria-labelledby='Preview')
+            a.dropdown-item(href='#') Profile
+            a.dropdown-item(href='/logout') Sign Out
+      else
+        li.nav-item.nav-item-first-item        
+          a.nav-link(href='#' onclick="signin()")
+            span.fa.fa-sign-in.fa-fw(aria-hidden="true") 
+            | Sign In
+      if user
+        li.nav-item.dropdown.hidden-lg-up
+          a.nav-link.dropdown-toggle(data-target='#', href='#', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false') My Ninjas
+          ul.dropdown-menu
+            if user.ninjas
+              each ninja in user.ninjas
+                li
+                  a.dropdown-item(href='/pirate/' + ninja.id)
+                    span.name #{ninja.name}
               else
                 li
                   a(href='#') No Ninjas
-          li.hidden-md.hidden-lg(data-toggle='collapse', data-target='#pirateListMobile')
-            a(href='#') My Pirates
-            ul#pirateListMobile.nav.nav-list.collapse
-              li
-                a(href='#') TBD-1
-              li
-                a(href='#') TBD-1
-              li
-                a(href='#') TBD-1
-        li.dropdown
-          a.dropdown-toggle(href='#', data-toggle='dropdown') Help
+      if user
+        li.nav-item.dropdown.hidden-lg-up
+          a.nav-link.dropdown-toggle(data-target='#', href='#', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false') My Pirates
           ul.dropdown-menu
             li
-              a(href='#') About
-            li.divider
-            li
-              a(href='#') Contact
-        if user
-          li.dropdown
-            a.dropdown-toggle(href='#', data-toggle='dropdown')
-              span.name #{user.profile.displayName}
-              span.glyphicon.glyphicon-user.pull-right.fa-fw
-            ul.dropdown-menu
-              li
-                a(href='#')
-                  | Profile 
-                  span.glyphicon.glyphicon-cog.pull-right.fa-fw
-              li.divider
-              li
-                a(href='/logout')
-                  | Sign Out 
-                  span.glyphicon.glyphicon-log-out.pull-right.fa-fw
-        else
+              a.dropdown-item(href='#') No Pirates Yet
+      li.nav-item.dropdown
+        a.nav-link.dropdown-toggle(data-target='#', href='#', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false') Help
+        ul.dropdown-menu
           li
-            a(href='#' onclick="signin()")
-              span.glyphicon.glyphicon-log-in.pull-right.fa-fw
-              |  Sign In
+            a.dropdown-item(href='#') About
+          li
+            a.dropdown-item(href='#') Contact      
 
   script(src="https://cdn.auth0.com/js/lock-9.2.js")
   script(src='//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js')
