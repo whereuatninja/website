@@ -11,12 +11,12 @@ block content
           li(data-target='#myCarousel', data-slide-to='1')
           li(data-target='#myCarousel', data-slide-to='2')
         .carousel-inner(role='listbox')
-          .item.active
-            img.first-slide.img-responsive.center-block(src='/images/whereuat_ninja.png', alt='First slide')
-          .item
-            img.second-slide.img-responsive.center-block(src='/images/slide2.png', alt='Second slide')
-          .item
-            img.third-slide.img-responsive.center-block(src='/images/slide3.png', alt='Third slide')
+          .carousel-item.active
+            img.first-slide.img-fluid.center-block(src='/images/whereuat_ninja.png', alt='First slide')
+          .carousel-item
+            img.second-slide.img-fluid.center-block(src='/images/slide2.png', alt='Second slide')
+          .carousel-item
+            img.third-slide.img-fluid.center-block(src='/images/slide3.png', alt='Third slide')
         a.left.carousel-control(href='#myCarousel', role='button', data-slide='prev')
           span.glyphicon.glyphicon-chevron-left(aria-hidden='true')
           span.sr-only Previous
