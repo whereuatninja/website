@@ -54,6 +54,18 @@
     margin-right: .25em;
 }
 
+@media (max-width: 34em) {
+
+    #map { height: 250px }
+
+}
+
+@media (max-width: 48em) {
+
+    #map { height: 350px }
+
+}
+
 @media (max-width: 62em) {
     .navbar-nav {
         padding-top: .425rem;
