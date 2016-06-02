@@ -38,8 +38,20 @@
     border: 1px solid #e3e3e3;
 }
 
-.sidebar-list-item{
+.sidebar-list-item {
     padding-left: 10px;
+}
+
+.test-well{
+    padding: 1em;
+    border: solid #F3F3F3;
+    border-width: .2rem;
+    background-color: #F7F7F7;
+}
+
+.btn-margin{
+    margin-left: .25em;
+    margin-right: .25em;
 }
 
 @media (max-width: 62em) {

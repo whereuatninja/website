@@ -194,7 +194,7 @@ var MapModule = (function(){
 			groupIndex = _groupedLocations.length-1;
 		}
 		else if(groupIndex <= 0){
-			console.log("Im done playing");
+			setPlayBackLabel("");
 			return;
 		}
 		console.log("Group index: "+groupIndex);
@@ -220,8 +220,8 @@ var MapModule = (function(){
 		var newPosition = new google.maps.LatLng(currentLocation.lat, currentLocation.long);
 		path.push(newPosition);
 		var fromNow = moment.utc(currentLocation.time).fromNow();
-		var time = moment.utc(currentLocation.time).format("MMM DD YYYY hh:mm A");
-		$("#play-information b").text("("+fromNow+") " + time);
+		var time = moment.utc(currentLocation.time).format("MMM DD YYYY hh:mm A z");
+		setPlayBackLabel("Playback Information: ("+fromNow+") " + time);
 
 		if(currentLocation.message){
 			var titleFromNow = "<b>("+moment(currentLocation.time).fromNow()+")</b>";
@@ -249,6 +249,10 @@ var MapModule = (function(){
 			_polyLines.push(polyLine);
 			playAnimation(--groupIndex);
 		}
+	};
+
+	var setPlayBackLabel = function(str){
+		$("#play-information b").text(str);
 	}
 
 	return {
@@ -273,6 +277,9 @@ var WhereUAtDateSlider = (function(){
 	var _afterLabelId;
 	var _timeZoneLabelId;
 
+	var _beforeLabel;
+	var _afterLabel;
+
 	var _minMomentUtc;//actual moment obj converted to UTC from time passed into module
 	var _maxMomentUtc;
 
@@ -289,19 +296,32 @@ var WhereUAtDateSlider = (function(){
 				value: [_minSliderEpochTime, _maxSliderEpochTime],
 				focus: true,
 				step: _sliderStep,
-				formatter: toolTipFormatter});
+				tooltip: 'hide'
+				//formatter: toolTipFormatter
+			}
+		).on("slide", onChangeEvent);
 	};
+
+	var onChangeEvent = function(minMaxValues){
+		drawMinMaxLabels(minMaxValues);
+	};
+
+	var drawMinMaxLabels = function(minMaxValues){
+		_beforeLabel.innerHTML = moment(new Date(0).setUTCSeconds(minMaxValues[1])).format("MMM Do YYYY");
+		_afterLabel.innerHTML = moment(new Date(0).setUTCSeconds(minMaxValues[0])).format("MMM Do YYYY");
+	}
 
 	var setupLabels = function(options){
 		_beforeLabelId = options.beforeLabelId;
 		_afterLabelId = options.afterLabelId;
 		_timeZoneLabelId = options.timeZoneLabelId;
-		var beforeLabel = document.getElementById(_beforeLabelId);
-		var afterLabel = document.getElementById(_afterLabelId);
+		_beforeLabel = document.getElementById(_beforeLabelId);
+		_afterLabel = document.getElementById(_afterLabelId);
 		var timeZoneLabel = document.getElementById(_timeZoneLabelId);
-		beforeLabel.innerHTML = getPrettyDate(_maxSliderDate);
-		afterLabel.innerHTML = getPrettyDate(_minSliderDate);
-		timeZoneLabel.innerHTML = getPrettyTimeZone(_minMomentUtc);
+		drawMinMaxLabels([_minSliderDate.unix(), _maxSliderDate.unix()]);
+		//_beforeLabel.innerHTML = getPrettyDate(_maxSliderDate);
+		//_afterLabel.innerHTML = getPrettyDate(_minSliderDate);
+		//timeZoneLabel.innerHTML = getPrettyTimeZone(_minMomentUtc);
 	}
 
 	var setupTimeDates = function(options){
@@ -311,8 +331,8 @@ var WhereUAtDateSlider = (function(){
 	};
 
 	var setupMinMaxSliderDates = function(){
-		_maxSliderDate = moment.utc(_maxMomentUtc).add(1, 'days').hour(0).minute(0).second(0);
 		_minSliderDate = moment.utc(_minMomentUtc).hour(0).minute(0).second(0);
+		_maxSliderDate = moment.utc(_maxMomentUtc).add(1, 'days').hour(0).minute(0).second(0);
 		_minSliderEpochTime = _minSliderDate.valueOf()/1000;
 		_maxSliderEpochTime = _maxSliderDate.valueOf()/1000;
 	};
@@ -334,7 +354,8 @@ var WhereUAtDateSlider = (function(){
 		afterToolTipDate.setUTCSeconds(sliderEpochValues[0]);
 		var beforeToolTipDate = new Date(0);
 		beforeToolTipDate.setUTCSeconds(sliderEpochValues[1]);
-		return ""+moment(afterToolTipDate).format("MMM Do YYYY")+" - "+moment(beforeToolTipDate).format("MMM Do YYYY");
+		//return ""+moment(afterToolTipDate).format("MMM Do YYYY")+" - "+moment(beforeToolTipDate).format("MMM Do YYYY");
+		return ["test", "test2"];
 	};
 
 	var getSliderValues = function(){
@@ -368,7 +389,8 @@ var LocationDatePicker = (function(){
 		$(_button).datepicker({
 			title: "Pick a date range",
 			startDate: _minDate,
-			endDate: _maxDate
+			endDate: _maxDate,
+			autoclose: true
 		}).on("changeDate", onChangeDate);
 	};
 

@@ -5,7 +5,7 @@ each loc in locations
         form.centerActivity
           input(type="hidden", name="lat", value=loc.lat)
           input(type="hidden", name="long", value=loc.long)
-          button.btn.btn-default Center on Map
+          button.btn.btn-secondary Center on Map
       - var time = new Date(loc.time).toUTCString();
       - var fromNow = moment(loc.time).fromNow();
       td #{time}(#{fromNow})

@@ -45,17 +45,17 @@ block content
             h2.sub-header Find&nbsp;
               span.name #{viewModel.ninja.name}!
             #map
+            br
             if viewModel.locations
-              h2.sub-header Time Range
-              div.well
-                button#button-datepicker.btn.btn-default.btn-lg(type='button', aria-label='Pick a Date') Pick a Date
+              span#play-information
+                b
+              div.test-well
+                button#button-datepicker.btn.btn-secondary.btn-lg.btn-margin(type='button', aria-label='Pick a Date') Pick a Date
                     span.glyphicon.glyphicon-calendar(aria-hidden='true', style='padding-left: .25em')
-                button#button-filter.btn.btn-primary.btn-lg Filter
+                button#button-filter.btn.btn-primary.btn-lg.btn-margin Filter
                   span#button-filter-loader.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
-                button#button-play.btn.btn-default.btn-lg Play
+                button#button-play.btn.btn-secondary.btn-lg.btn-margin Play
                   span.glyphicon.glyphicon-play
-                span#play-information
-                  b (Time goes here)
                 br
                 br
                 b#slider-after-label After
