@@ -8,22 +8,24 @@ var MapModule = (function(){
 	var _markers = [];
 	var _groupedLocations = [];
 	var _currentLocationMarker;
+	var _mostRecentLocation;
 
 	var _groupedLocationsIndex;
 	var _locationsIndex;
 
 
-	var initialize = function(mapElem, locations){
-		setLocations(locations);
+	var initialize = function(mapElem, locations, mostRecentLocation){
+		setLocations(locations, mostRecentLocation);
 		_initializeMap(mapElem);
 		_drawLocations(_groupedLocations);
 		_drawActivities(_activities);
 		centerMap(_googleMapsLatLngLocations);
-		addMarkerAtMostRecentPosition(locations);
+		addMarkerAtMostRecentPosition(mostRecentLocation);
 	};
 
-	var setLocations = function(locations){
+	var setLocations = function(locations, mostRecentLocation){
 		_locations = locations;
+		_mostRecentLocation = mostRecentLocation;
 		_groupedLocations = _getGroupedLocations(locations);
 		_googleMapsLatLngLocations = _getGoogleMapsLatLngLocations(locations);
 		_activities = _getActivities(locations);
@@ -34,6 +36,7 @@ var MapModule = (function(){
 		_drawLocations(_groupedLocations);
 		_drawActivities(_activities);
 		centerMap(_googleMapsLatLngLocations);
+		addMarkerAtMostRecentPosition(mostRecentLocation);
 	};
 
 	var _getGoogleMapsLatLngLocations = function(locations){
@@ -70,7 +73,7 @@ var MapModule = (function(){
 	var _getActivities = function(locations){
 		var activities = [];
 		locations.forEach(function(loc){
-			if(loc.message){
+			if(loc.message || loc.twitterUrl){
 				activities.push(loc);
 			}
 		});
@@ -97,9 +100,9 @@ var MapModule = (function(){
 		return marker;
 	};
 
-	var addMarkerAtMostRecentPosition = function(locations){
-		var mostRecentLocation = locations[locations.length-1];
+	var addMarkerAtMostRecentPosition = function(mostRecentLocation){
 		_currentLocationMarker = createClickableMarker(mostRecentLocation, "We're here right now! ");
+		_currentLocationMarker.setMap(_map);
 	};
 
 	var _initializeMap = function(mapElem){
@@ -145,9 +148,12 @@ var MapModule = (function(){
 
 	var _drawActivities = function(activities){
 		activities.forEach(function(activity){
-			var marker = createClickableMarker(activity);
-			marker.setMap(_map);
-			_markers.push(marker);
+			if(_mostRecentLocation.id != activity.id){
+				var marker = createClickableMarker(activity);
+				marker.setMap(_map);
+				_markers.push(marker);
+			}
+
 		});
 	};
 
@@ -262,7 +268,8 @@ var MapModule = (function(){
 		setLocations: setLocations,
 		redraw: redraw,
 		centerMapByLatLong: centerMapByLatLong,
-		play: play
+		play: play,
+		centerOnMostRecentLocation: centerOnMostRecentLocation
 	};
 })();
 
@@ -457,14 +464,15 @@ var LocationLoader = (function(){
 		$promise.done(function(response){
 			_filterButton.hideLoading();
 			hideTableLoading();
-			MapModule.setLocations(response.locations);
+			console.log("filtered: %j", response);
+			MapModule.setLocations(response.locations, response['mostRecentLocation']);
 			MapModule.redraw();
 			_$locationTbody.html(response.locationListHtml);
 			TwitterLoader.initialize();
 		});
 
 		$promise.fail(function(){
-			alert("Ahhhh crap that didn't work...You might need to log out and log back in.")
+			alert("Ahhhh crap that didn't work...\nPlease sign out and sign back in!");
 		});
 	};
 

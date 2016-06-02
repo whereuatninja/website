@@ -20,18 +20,28 @@ router.get('/:ninja_id', ensureLoggedIn, function(req, res, next) {
   var ninjas = user.ninjas;
   var ninjaId = req.params.ninja_id;
   var ninja = getCurrentNinjaFromList(ninjaId, ninjas);
-  var viewModel = {currentNinjaId: ninjaId};
+  var viewModel = {
+    currentNinjaId: ninjaId,
+    ninjaId: ninjaId,
+    ninja: ninja
+  };
+
   getLocationsByNinjaId(token, ninjaId)
-  .then(function(locations){
-    if(locations.length > 0){
-      viewModel.minSliderTime = getMinLocationTime(locations);
-      viewModel.maxSliderTime = getMaxLocationTime(locations);
-      viewModel.locations = locations;
-    }
-    viewModel.ninjaId = ninjaId;
-    viewModel.ninja = ninja;
-    res.render('pirate', { user: user, viewModel: viewModel });
-  });
+    .then(function(locations){
+      if(locations.length > 0){
+        viewModel.minSliderTime = getMinLocationTime(locations);
+        viewModel.maxSliderTime = getMaxLocationTime(locations);
+        viewModel.locations = locations;
+      }
+      return getMostRecentLocationByUserId(token, ninjaId);
+    })
+    .then(function(mostRecentLocation){
+        if(mostRecentLocation){
+          viewModel.mostRecentLocation = mostRecentLocation[0];
+        }
+        console.log("viewModel: %j", viewModel);
+        res.render('pirate', { user: user, viewModel: viewModel });
+    });
 });
 
 function getCurrentNinjaFromList(currentNinjaId, ninjas){
@@ -58,9 +68,34 @@ function getFirstNinja(ninjas){
   return undefined;
 }
 
-function getLocationsByNinjaId(token, firstNinjaId){
+function getLocationsForUser(token, userId){
+  var locationInfo = {};
+  getLocationsByNinjaId(token, ninjaId)
+      .then(function(locations){
+          locationInfo.locations = locations;
+          return getMostRecentLocationByUserId(token, userId);
+      })
+      .then(function(mostRecentLocation){
+          locationInfo.mostRecentLocation = mostRecentLocation[0];
+          return locationInfo;
+      })
+
+}
+
+function getLocationsByNinjaId(token, ninjaId){
   var options = {
-    url: process.env.API_URL+"/locations/"+firstNinjaId,
+    url: process.env.API_URL+"/locations/"+ninjaId,
+    method: 'GET',
+    json: true,
+    auth: { bearer: token }
+  };
+
+  return rp(options).promise();
+}
+
+function getMostRecentLocationByUserId(token, userId){
+  var options = {
+    url: process.env.API_URL+"/locations/"+userId+"?mostRecent=true",
     method: 'GET',
     json: true,
     auth: { bearer: token }

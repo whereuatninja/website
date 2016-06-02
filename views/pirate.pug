@@ -58,9 +58,7 @@ block content
                 button#button-play.btn.btn-secondary.btn-lg.btn-margin Play
                   i.fa.fa-play.fa-3(aria-hidden='true', style='padding-left: .25em')
                 br
-                br
                 b#slider-after-label After
-                b#slider-timezone-label TimeZone
                 b#slider-before-label Before
                 br
                 input#timeSlider(type='text')
@@ -96,7 +94,7 @@ block content
                       afterLabelId: "slider-after-label",
                       timeZoneLabelId: "slider-timezone-label"
                   });
-                  var mapModule = MapModule.initialize(document.getElementById('map'), !{JSON.stringify(viewModel.locations)});
+                  var mapModule = MapModule.initialize(document.getElementById('map'), !{JSON.stringify(viewModel.locations)}, !{JSON.stringify(viewModel.mostRecentLocation)});
                   var locationLoader = LocationLoader.initialize();
                   var locationDatePicker = LocationDatePicker.initialize("#{viewModel.minSliderTime}", "#{viewModel.maxSliderTime}");
                 });

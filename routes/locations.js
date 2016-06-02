@@ -10,18 +10,37 @@ router.get('/:ninja_id', ensureLoggedIn, function(req, res, next) {
     console.log("query parms: %j", req.query);
     var ninjaId = req.params.ninja_id;
     var queryParameters = getQueryParameters(req.query);
+    var resData = {};
     getLocationsByNinjaId(token, ninjaId, queryParameters)
     .then(function(locations){
         res.render('locationlist', {locations: locations},  function(err, html) {
-            console.log(html);
-            var resData = {
-                locations: locations,
-                locationListHtml: html
-            };
-            res.json(resData);
+            resData.locations = locations;
+            console.log("***locations: %j", resData.locations);
+            resData.locationListHtml = html;
+            //res.json(resData);
         });
+        console.log("***after locations: %j", resData.locations);
+        return getMostRecentLocationByUserId(token, ninjaId);
+    })
+    .then(function(mostRecentLocation){
+        if(mostRecentLocation){
+            resData.mostRecentLocation = mostRecentLocation[0];
+        }
+        console.log("filtered location data: %j", resData);
+        res.json(resData);
     });
 });
+
+function getMostRecentLocationByUserId(token, userId){
+    var options = {
+        url: process.env.API_URL+"/locations/"+userId+"?mostRecent=true",
+        method: 'GET',
+        json: true,
+        auth: { bearer: token }
+    };
+
+    return rp(options).promise();
+}
 
 function getLocationsByNinjaId(token, ninjaId, queryParameters){
 
