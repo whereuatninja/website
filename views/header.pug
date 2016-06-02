@@ -22,7 +22,7 @@ nav.navbar.navbar-dark.navbar-fixed-top.bg-inverse(role='navigation')
             span.fa.fa-sign-in.fa-fw(aria-hidden="true") 
             | Sign In
       if user
-        li.nav-item.dropdown.hidden-lg-up
+        li.nav-item.dropdown
           a.nav-link.dropdown-toggle(data-target='#', href='#', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false') My Ninjas
           ul.dropdown-menu
             if user.ninjas
