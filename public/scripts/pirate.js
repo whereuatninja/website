@@ -17,7 +17,6 @@ var MapModule = (function(){
 		setLocations(locations);
 		_initializeMap(mapElem);
 		_drawLocations(_groupedLocations);
-		//drawActivities(_googleMapsActivities);
 		_drawActivities(_activities);
 		centerMap(_googleMapsLatLngLocations);
 		addMarkerAtMostRecentPosition(locations);
@@ -31,7 +30,9 @@ var MapModule = (function(){
 	};
 
 	var redraw = function(){
+		_clearMap();
 		_drawLocations(_groupedLocations);
+		_drawActivities(_activities);
 		centerMap(_googleMapsLatLngLocations);
 	};
 
@@ -317,10 +318,8 @@ var WhereUAtDateSlider = (function(){
 		_timeZoneLabelId = options.timeZoneLabelId;
 		_beforeLabel = document.getElementById(_beforeLabelId);
 		_afterLabel = document.getElementById(_afterLabelId);
-		var timeZoneLabel = document.getElementById(_timeZoneLabelId);
 		drawMinMaxLabels([_minSliderDate.unix(), _maxSliderDate.unix()]);
-		//_beforeLabel.innerHTML = getPrettyDate(_maxSliderDate);
-		//_afterLabel.innerHTML = getPrettyDate(_minSliderDate);
+		var timeZoneLabel = document.getElementById(_timeZoneLabelId);
 		//timeZoneLabel.innerHTML = getPrettyTimeZone(_minMomentUtc);
 	}
 
@@ -344,18 +343,12 @@ var WhereUAtDateSlider = (function(){
 		return "";
 	};
 
-	var getPrettyDate = function(date){
-		return moment(date).format("MMM Do YYYY");
-		//return date.toLocaleString();
-	};
-
 	var toolTipFormatter = function(sliderEpochValues){
 		var afterToolTipDate = new Date(0);
 		afterToolTipDate.setUTCSeconds(sliderEpochValues[0]);
 		var beforeToolTipDate = new Date(0);
 		beforeToolTipDate.setUTCSeconds(sliderEpochValues[1]);
-		//return ""+moment(afterToolTipDate).format("MMM Do YYYY")+" - "+moment(beforeToolTipDate).format("MMM Do YYYY");
-		return ["test", "test2"];
+		return ""+moment(afterToolTipDate).format("MMM Do YYYY")+" - "+moment(beforeToolTipDate).format("MMM Do YYYY");
 	};
 
 	var getSliderValues = function(){
