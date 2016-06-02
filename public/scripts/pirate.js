@@ -516,7 +516,7 @@ var LoaderButton = function(id){
 	function initialize(id){
 		_id = id;
 		_$elem = $("#"+id);
-		_$loadingSpinner = _$elem.children(".glyphicon-refresh");
+		_$loadingSpinner = _$elem.children(".refresh-animate");
 	}
 
 	function showLoading(){

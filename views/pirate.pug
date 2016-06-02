@@ -53,7 +53,7 @@ block content
                 button#button-datepicker.btn.btn-secondary.btn-lg.btn-margin(type='button', aria-label='Pick a Date') Pick a Date
                     span.glyphicon.glyphicon-calendar(aria-hidden='true', style='padding-left: .25em')
                 button#button-filter.btn.btn-primary.btn-lg.btn-margin Filter
-                  span#button-filter-loader.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
+                  i#button-filter-loader.fa.fa-refresh.fa-3.refresh-animate(aria-hidden='true')
                 button#button-play.btn.btn-secondary.btn-lg.btn-margin Play
                   span.glyphicon.glyphicon-play
                 br
@@ -81,7 +81,7 @@ block content
 
             div#activityLoader
               strong Loading Activities...
-              span#activity-loader.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
+              i.fa.fa-refresh.fa-3.refresh-animate(aria-hidden='true')
             if viewModel.locations
               script(src='//maps.googleapis.com/maps/api/js?key=AIzaSyCKJnJars0xRRUHCtbzBgTG7TWMQLk_rYc')
               script(type='text/javascript').
