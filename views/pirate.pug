@@ -12,9 +12,9 @@ block content
     script(src='/scripts/pirate.js')
     .container-fluid
       .row
-        .col-sm-3.col-md-2.sidebar
+        .col-lg-2.sidebar.hidden-md-down
           ul.nav.nav-stacked
-            li.nav-header.clickable(data-toggle='collapse', data-target='#ninjaList')
+            li.nav-header
               h5
                 span
                   | My Ninjas 
@@ -27,14 +27,14 @@ block content
                 else
                   li.sidebar-list-item
                     a(href='#') No Ninjas 
-            li.nav-header.clickable(data-toggle='collapse', data-target='#pirateList')
+            li.nav-header
               h5
                 span
                   | My Pirates
-              ul#pirateList.nav.nav-list.collapse
+              ul#pirateList.nav.nav-list
                 li.sidebar-list-item
                   a(href='#') No Pirates Yet
-        .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
+        .col-lg-10.col-lg-offset-2.main
           if !viewModel.locations
             if viewModel.ninja
               h3 No locations found for&nbsp;
@@ -45,7 +45,6 @@ block content
             h2.sub-header Find&nbsp;
               span.name #{viewModel.ninja.name}!
             #map
-            br
             if viewModel.locations
               span#play-information
                 b
@@ -65,20 +64,7 @@ block content
                 br
                 input#timeSlider(type='text')
 
-            h2.sub-header Activities
-            #whereubeen.table-responsive
-            table#whereubeen.table.table-responsive.table-striped
-              thead
-                tr
-                  td
-                  th Time
-                  th Message
-                  th Neighborhood
-                  th City
-                  th Twitter Post
-              tbody
-                - var locations = viewModel.locations;
-                include locationlist
+            h2.sub-header Moments
 
             div#activityLoader
               strong Loading Activities...
@@ -101,77 +87,20 @@ block content
                   var locationDatePicker = LocationDatePicker.initialize("#{viewModel.minSliderTime}", "#{viewModel.maxSliderTime}");
                 });
           .container.m-t-md
-            // First row
-            .row
-              .col-xs-12.col-md-6.col-lg-4
-                // Card
-                article.card.animated.fadeInLeft
-                  img.card-img-top.img-fluid(src='https://snap-photos.s3.amazonaws.com/img-thumbs/960w/1U2EGZ07GU.jpg', alt='Deer in nature')
-                  .card-block
-                    h4.card-title Animal Farm
-                    h6.text-muted George Orwell
-                    p.card-text
-                      | Tired of their servitude to man, a group of farm animals revolt and establish their own society, only to be betrayed into worse servitude by their leaders, the pigs. This satire addresses the communist philosophy the Soviet Union.
-                // .end Card
-              .col-xs-12.col-md-6.col-lg-4
-                // Card
-                article.card.animated.fadeInUp
-                  .card-block
-                    h4.card-title Life After Life
-                    h6.text-muted Kate Atkinson
-                  img.img-fluid(src='https://snap-photos.s3.amazonaws.com/img-thumbs/960w/SYC0YBA37V.jpg', alt='Leaf on the street')
-                  .card-block
-                    p.card-text
-                      | On a cold and snowy night, Ursula Todd is born, the 3rd child of a wealthy banker and his wife. She dies before she can draw her first breath. On that same cold and snowy night, lets out a lusty wail.
-                // .end Card
-              .col-xs-12.col-md-6.col-lg-4
-                // Card
-                article.card.animated.fadeInRight
-                  .card-block
-                    h4.card-title Wind, Sand and Stars
-                    h6.text-muted Antoine de Saint-Exupéry
-                    p.card-text
-                      | Story that captures the grandeur, danger, and isolation of flight. Its exciting account of air adventure, combined with lyrical prose and the spirit of a philosopher, makes it one of the most popular works ever written.
-                  img.card-img-bottom.img-fluid(src='https://snap-photos.s3.amazonaws.com/img-thumbs/960w/8SALDQRRZX.jpg', alt='White sand')
-                // .end Card
-            // .end First row
-            // Second row
-            .row.m-t-md
-              .col-xs-12.col-md-6.col-lg-4
-                // Card
-                article.card.animated.fadeInLeft
-                  blockquote.twitter-tweet(data-lang='en')
-                    p(lang='en', dir='ltr')
-                      | Just noticed i had some tiny hint of ginger in my beard. This is unacceptable, shaving tmrw, rip beard
-                      a(href='https://t.co/f2dn1ZAcFC') pic.twitter.com/f2dn1ZAcFC
-                    | — poopiepie (@pewdiepie)
-                    a(href='https://twitter.com/pewdiepie/status/737384413445689346') May 30, 2016
-                  script(async='', src='//platform.twitter.com/widgets.js', charset='utf-8')
-                  .card-block
-                    h4.card-title Animal Farm
-                    h6.text-muted George Orwell
-                    p.card-text
-                      | Tired of their servitude to man, a group of farm animals revolt and establish their own society, only to be betrayed into worse servitude by their leaders, the pigs. This satire addresses the communist philosophy the Soviet Union.
-                // .end Card
-              .col-xs-12.col-md-6.col-lg-4
-                // Card
-                article.card.animated.fadeInRight
-                  .card-block
-                    h4.card-title Wind, Sand and Stars
-                    h6.text-muted Antoine de Saint-Exupéry
-                    p.card-text
-                      | Story that captures the grandeur, danger, and isolation of flight. Its exciting account of air adventure, combined with lyrical prose and the spirit of a philosopher, makes it one of the most popular works ever written.
-                  img.card-img-bottom.img-fluid(src='https://snap-photos.s3.amazonaws.com/img-thumbs/960w/8SALDQRRZX.jpg', alt='White sand')
-                // .end Card
-              .col-xs-12.col-md-6.col-lg-4
-                // Card
-                article.card.animated.fadeInUp
-                  .card-block
-                    h4.card-title Life After Life
-                    h6.text-muted Kate Atkinson
-                  img.img-fluid(src='https://snap-photos.s3.amazonaws.com/img-thumbs/960w/SYC0YBA37V.jpg', alt='Leaf on the street')
-                  .card-block
-                    p.card-text
-                      | On a cold and snowy night, Ursula Todd is born, the 3rd child of a wealthy banker and his wife. She dies before she can draw her first breath. On that same cold and snowy night, lets out a lusty wail.
-                // .end Card
-            // .end Second row
+            - var locations = viewModel.locations;
+            - var counter = 0;
+            each loc in viewModel.locations
+              if loc.twitterUrl
+                if (counter++ % 2 === 0)
+                  .row                 
+                .col-sm-12.col-lg-6(counter=counter)
+                  .card#whereubeen
+                    - var fromNow = moment(loc.time).fromNow();
+                    - var city = loc.city;
+                    - var country = loc.country;
+                    .card-header
+                      | #{fromNow} #{city} #{country}
+                    form.twitter
+                      input(type='hidden',name='twitterUrl', value=loc.twitterUrl)
+                    div.twitterHolder
+                    a.btn.btn-primary(href='#') Find This Moment on the Map     
