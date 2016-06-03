@@ -1,19 +1,30 @@
-each loc in locations
-  if loc.message
-    tr
-      td
-        form.centerActivity
-          input(type="hidden", name="lat", value=loc.lat)
-          input(type="hidden", name="long", value=loc.long)
-          button.btn.btn-secondary Center on Map
-      - var time = new Date(loc.time).toUTCString();
-      - var fromNow = moment(loc.time).fromNow();
-      td #{time}(#{fromNow})
-      td= loc.message
-      td= loc.neighborhood
-      td= loc.locality
-      td
-        if loc.twitterUrl
-          form.twitter
-            input(type='hidden',name='twitterUrl', value=loc.twitterUrl)
-          div.twitterHolder
+- var counter = 0;
+if locations
+  each loc in locations
+    if loc.twitterUrl
+      if (counter++ % 2 === 0)
+        .row
+      .col-sm-12.col-lg-6(counter=counter)
+        .card#whereubeen
+          center
+            - var prettyDate = moment.utc(loc.time).format("MM/DD/YY hh:mmA z")
+            - var fromNow = moment(loc.time).fromNow();
+            - var city = loc.city? loc.city+',' : '';
+            - var country = loc.country;
+            .card-header
+              span(style='float:left') #{fromNow}
+              span(style='float:right') #{city} #{country}
+              div(style='clear:both;')
+            center
+              span #{prettyDate}
+            div(style='clear:both;')
+            blockquote.blockquote
+              p #{loc.message}
+            form.twitter
+              input(type='hidden',name='twitterUrl', value=loc.twitterUrl)
+            div.twitterHolder
+            form.centerActivity
+              input(type="hidden", name="lat", value=loc.lat)
+              input(type="hidden", name="long", value=loc.long)
+              input(type="hidden", name="id", value=loc.id)
+              button.btn.btn-secondary Find This Moment on the Map

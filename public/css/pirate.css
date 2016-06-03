@@ -33,3 +33,17 @@
   cursor: hand;
   cursor: pointer;
 }
+
+.datepicker.datepicker-inline{
+  background-color: white;
+  border-radius: .3rem;
+  border: 1px solid transparent;
+  border-color: #ccc;
+}
+
+.datepicker { font-size: 16px; }
+
+.blockquote{
+  width: 90%;
+}
+

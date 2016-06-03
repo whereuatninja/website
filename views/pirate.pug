@@ -46,27 +46,29 @@ block content
               span.name #{viewModel.ninja.name}!
             #map
             if viewModel.locations
+              br
               span#play-information
                 b
               div.test-well
-                button#button-datepicker.btn.btn-secondary.btn-lg.btn-margin(type='button', aria-label='Pick a Date') Pick a Date
-                    i.fa.fa-calendar.fa-3(aria-hidden='true', style='padding-left: .25em')
+                //button#button-datepicker.btn.btn-secondary.btn-lg.btn-margin(type='button', aria-label='Pick a Date') Pick a Date
+                    //i.fa.fa-calendar.fa-3(aria-hidden='true', style='padding-left: .25em')
                 button#button-filter.btn.btn-primary.btn-lg.btn-margin Filter
                   i.fa.fa-filter.fa-3(aria-hidden='true', style='padding-left: .25em')
                   i#button-filter-loader.fa.fa-refresh.fa-3.refresh-animate(aria-hidden='true')
                 button#button-play.btn.btn-secondary.btn-lg.btn-margin Play
                   i.fa.fa-play.fa-3(aria-hidden='true', style='padding-left: .25em')
+                button#button-center-recent.btn.btn-secondary.btn-lg.btn-margin Center On Most Recent Location
+                  i.fa.fa-bullseye.fa-3(aria-hidden='true', style='padding-left: .25em')
                 br
                 b#slider-after-label After
                 b#slider-before-label Before
                 br
                 input#timeSlider(type='text')
+                center
+                  .div#datepicker
 
             h2.sub-header Moments
 
-            div#activityLoader
-              strong Loading Activities...
-              i.fa.fa-refresh.fa-3.refresh-animate(aria-hidden='true')
             if viewModel.locations
               script(src='//maps.googleapis.com/maps/api/js?key=AIzaSyCKJnJars0xRRUHCtbzBgTG7TWMQLk_rYc')
               script(type='text/javascript').
@@ -84,21 +86,11 @@ block content
                   var locationLoader = LocationLoader.initialize();
                   var locationDatePicker = LocationDatePicker.initialize("#{viewModel.minSliderTime}", "#{viewModel.maxSliderTime}");
                 });
-          .container.m-t-md
-            - var locations = viewModel.locations;
-            - var counter = 0;
-            each loc in viewModel.locations
-              if loc.twitterUrl
-                if (counter++ % 2 === 0)
-                  .row                 
-                .col-sm-12.col-lg-6(counter=counter)
-                  .card#whereubeen
-                    - var fromNow = moment(loc.time).fromNow();
-                    - var city = loc.city;
-                    - var country = loc.country;
-                    .card-header
-                      | #{fromNow} #{city} #{country}
-                    form.twitter
-                      input(type='hidden',name='twitterUrl', value=loc.twitterUrl)
-                    div.twitterHolder
-                    a.btn.btn-primary(href='#') Find This Moment on the Map     
+              .container.m-t-md
+                .location-cards
+                  - var locations = viewModel.locations;
+                  include locationlist
+
+                div#activityLoader
+                  strong Loading Moments...
+                  i.fa.fa-refresh.fa-3.refresh-animate(aria-hidden='true')

@@ -20,7 +20,7 @@ var MapModule = (function(){
 		_drawLocations(_groupedLocations);
 		_drawActivities(_activities);
 		centerMap(_googleMapsLatLngLocations);
-		addMarkerAtMostRecentPosition(mostRecentLocation);
+		addMarkerAtMostRecentPosition();
 	};
 
 	var setLocations = function(locations, mostRecentLocation){
@@ -36,7 +36,7 @@ var MapModule = (function(){
 		_drawLocations(_groupedLocations);
 		_drawActivities(_activities);
 		centerMap(_googleMapsLatLngLocations);
-		addMarkerAtMostRecentPosition(mostRecentLocation);
+		addMarkerAtMostRecentPosition();
 	};
 
 	var _getGoogleMapsLatLngLocations = function(locations){
@@ -87,11 +87,13 @@ var MapModule = (function(){
 			position: {lat: loc.lat, lng: loc.long},
 			title: title
 		});
+		marker.locId = loc.id;
 
 		google.maps.event.addListener(marker, 'click', (function(marker) {
 			var infowindow = new google.maps.InfoWindow({
 				//maxWidth: 160
 			});
+			marker.infoWindow = infowindow;
 			return function() {
 				infowindow.setContent(title);
 				infowindow.open(_map, marker);
@@ -100,8 +102,8 @@ var MapModule = (function(){
 		return marker;
 	};
 
-	var addMarkerAtMostRecentPosition = function(mostRecentLocation){
-		_currentLocationMarker = createClickableMarker(mostRecentLocation, "We're here right now! ");
+	var addMarkerAtMostRecentPosition = function(){
+		_currentLocationMarker = createClickableMarker(_mostRecentLocation, "We're here right now!<br>");
 		_currentLocationMarker.setMap(_map);
 	};
 
@@ -167,11 +169,36 @@ var MapModule = (function(){
 		_map.fitBounds(bounds);
 	};
 
-	var centerMapByLatLong = function(lat, long){
+	var centerOnMostRecentLocation = function(){
+		if(_mostRecentLocation){
+			hideMarkerInfoWindows();
+			_currentLocationMarker.infoWindow.setContent(_currentLocationMarker.title);
+			_currentLocationMarker.infoWindow.open(_map, _currentLocationMarker);
+			centerMapOnLocation(_mostRecentLocation.lat, _mostRecentLocation.long);
+			window.scrollTo(0,0);
+		}
+	};
+
+	var hideMarkerInfoWindows = function(){
+		_markers.forEach(function(marker){
+			marker.infoWindow.close();
+		});
+	};
+
+	var centerMapOnLocation = function(lat, long, id){
 		var position = new google.maps.LatLng(lat, long);
 		var googleMapsLatLong = [position];
 		centerMap(googleMapsLatLong);
 		setZoom(16);
+		_markers.forEach(function(marker){
+			if(marker.locId == id){
+				marker.infoWindow.setContent(marker.title);
+				marker.infoWindow.open(_map, marker);
+				return;
+			}
+		});
+		//TODO pop up info window
+		window.scrollTo(0,0);
 	};
 
 	var setZoom = function(zoomLevel){
@@ -186,6 +213,8 @@ var MapModule = (function(){
 		_markers.forEach(function(marker){
 			marker.setMap(null);
 		});
+
+		_currentLocationMarker.setMap(null);
 	};
 
 	var play = function(){
@@ -201,10 +230,14 @@ var MapModule = (function(){
 			groupIndex = _groupedLocations.length-1;
 		}
 		else if(groupIndex <= 0){
+			//done playing animation
 			setPlayBackLabel("");
+			addMarkerAtMostRecentPosition();
+			setTimeout(function(){
+				redraw();
+			}, 1000);
 			return;
 		}
-		console.log("Group index: "+groupIndex);
 		var index = _groupedLocations[groupIndex].length-1;
 		_playLocationGroup(null, null, groupIndex, index);
 	};
@@ -252,8 +285,10 @@ var MapModule = (function(){
 			}, 500);
 		}
 		else{
-			console.log("Im done playing the group");
 			_polyLines.push(polyLine);
+			markers.forEach(function(marker){
+				_markers.push(marker);
+			});
 			playAnimation(--groupIndex);
 		}
 	};
@@ -267,7 +302,7 @@ var MapModule = (function(){
 		drawPolyLine: drawPolyLine,
 		setLocations: setLocations,
 		redraw: redraw,
-		centerMapByLatLong: centerMapByLatLong,
+		centerMapByLatLong: centerMapOnLocation,
 		play: play,
 		centerOnMostRecentLocation: centerOnMostRecentLocation
 	};
@@ -386,8 +421,14 @@ var LocationDatePicker = (function(){
 	};
 
 	var setupDatePicker = function(){
-		$(_button).datepicker({
-			title: "Pick a date range",
+		/*$(_button).datepicker({
+			title: "Pick a date",
+			startDate: _minDate,
+			endDate: _maxDate,
+			autoclose: true
+		}).on("changeDate", onChangeDate);*/
+		$("#datepicker").datepicker({
+			title: "Pick a date",
 			startDate: _minDate,
 			endDate: _maxDate,
 			autoclose: true
@@ -417,11 +458,11 @@ var LocationDatePicker = (function(){
 
 var LocationLoader = (function(){
 	var _filterButton;
-	var _$locationTbody;
+	var _$locationContainer;
 
 	var initialize = function(){
 		_filterButton = new LoaderButton("button-filter");
-		_$locationTbody = $("#whereubeen>tbody");
+		_$locationContainer = $(".location-cards");
 		setupEventListeners();
 	};
 
@@ -436,7 +477,7 @@ var LocationLoader = (function(){
 	};
 
 	var showTableLoading = function(){
-		_$locationTbody.html("");
+		_$locationContainer.html("");
 		$("#activityLoader").show();
 	};
 
@@ -464,15 +505,14 @@ var LocationLoader = (function(){
 		$promise.done(function(response){
 			_filterButton.hideLoading();
 			hideTableLoading();
-			console.log("filtered: %j", response);
 			MapModule.setLocations(response.locations, response['mostRecentLocation']);
 			MapModule.redraw();
-			_$locationTbody.html(response.locationListHtml);
+			_$locationContainer.html(response.locationListHtml);
 			TwitterLoader.initialize();
 		});
 
 		$promise.fail(function(){
-			alert("Ahhhh crap that didn't work...\nPlease sign out and sign back in!");
+			alert("Ahhhh crap that didn't work...\nPlease sign out and sign back in! \n(Your session probably expired)");
 		});
 	};
 
@@ -547,7 +587,8 @@ $(document).ready(function(){
 		var $form = $(this);
 		var lat = $form.children("[name=lat]").val();
 		var long = $form.children("[name=long]").val();
-		MapModule.centerMapByLatLong(lat, long);
+		var id = $form.children("[name=id]").val();
+		MapModule.centerMapByLatLong(lat, long, id);
 		return false;
 	});
 
@@ -555,5 +596,9 @@ $(document).ready(function(){
 
 	$("#button-play").on("click", function(){
 		MapModule.play();
+	});
+
+	$("#button-center-recent").on("click", function(){
+		MapModule.centerOnMostRecentLocation();
 	});
 });
