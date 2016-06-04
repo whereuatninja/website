@@ -82,7 +82,8 @@ var MapModule = (function(){
 
 	var createClickableMarker = function(loc, message){
 		var fromNow = "<b>("+moment(loc.time).fromNow()+")</b>";
-		var title = fromNow+"<br>"+(message || "")+(loc.message||"");
+		var twitterAnchor = loc.twitterUrl? "<br><a href='"+loc.twitterUrl+"' target='_blank'>See photo here!</a>" : "";
+		var title = fromNow+"<br>"+(message || "")+(loc.message||"")+twitterAnchor;
 		var marker = new google.maps.Marker({
 			position: {lat: loc.lat, lng: loc.long},
 			title: title
