@@ -267,9 +267,10 @@ var MapModule = (function(){
 		setPlayBackLabel("Playback Information: ("+fromNow+") " + time);
 
 		if(currentLocation.message){
-			var marker = createClickableMarker(currentLocation, "");
-			marker.infoWindow.open(_map, marker);
-			/*var titleFromNow = "<b>("+moment(currentLocation.time).fromNow()+")</b>";
+			/*var marker = createClickableMarker(currentLocation, "");
+			marker.setMap(_map);
+			marker.infoWindow.open(_map, marker);*/
+			var titleFromNow = "<b>("+moment(currentLocation.time).fromNow()+")</b>";
 			var title = titleFromNow+"<br>"+(currentLocation.message||"");
 			var infowindow = new google.maps.InfoWindow({
 				content: title
@@ -278,8 +279,10 @@ var MapModule = (function(){
 				position: newPosition,
 				title: title
 			});
+			marker.infowindow = infowindow;
+			marker.locId = currentLocation.id;
 			marker.setMap(_map);
-			infowindow.open(_map, marker);*/
+			infowindow.open(_map, marker);
 
 			markers.push(marker);
 		}
