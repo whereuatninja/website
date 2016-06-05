@@ -25,7 +25,6 @@ var MapModule = (function(){
 
 	var setLocations = function(locations, mostRecentLocation){
 		_locations = locations;
-		_markers = [];
 		_mostRecentLocation = mostRecentLocation;
 		_groupedLocations = _getGroupedLocations(locations);
 		_googleMapsLatLngLocations = _getGoogleMapsLatLngLocations(locations);
@@ -212,9 +211,12 @@ var MapModule = (function(){
 			polyline.setMap(null);
 		});
 
+		_polyLines = [];
+
 		_markers.forEach(function(marker){
 			marker.setMap(null);
 		});
+		_markers = [];
 
 		_currentLocationMarker.setMap(null);
 	};
@@ -445,7 +447,6 @@ var LocationDatePicker = (function(){
 
 
 	var onChangeDate = function(e){
-		console.dir(e);
 		var selectedDate = e.date;
 		var minEpoch = Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate())/1000;
 		WhereUAtDateSlider.setSliderToDateByEpoch(minEpoch);
