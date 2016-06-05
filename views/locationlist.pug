@@ -1,7 +1,7 @@
 - var counter = 0;
 if locations
   each loc in locations
-    if loc.twitterUrl
+    if loc.twitterUrl || loc.message
       if (counter++ % 2 === 0)
         .row
       .col-sm-12.col-lg-6(counter=counter)
