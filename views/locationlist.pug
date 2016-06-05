@@ -9,11 +9,12 @@ if locations
           center
             - var prettyDate = moment.utc(loc.time).format("MM/DD/YY hh:mmA z")
             - var fromNow = moment(loc.time).fromNow();
+            - var neighborhood = loc.neighborhood? loc.neighborhood+',' : '';
             - var city = loc.city? loc.city+',' : '';
             - var country = loc.country;
             .card-header
               span(style='float:left') #{fromNow}
-              span(style='float:right') #{city} #{country}
+              span(style='float:right') #{neighborhood} #{city} #{country}
               div(style='clear:both;')
             center
               span #{prettyDate}
