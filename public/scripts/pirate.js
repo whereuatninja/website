@@ -25,6 +25,7 @@ var MapModule = (function(){
 
 	var setLocations = function(locations, mostRecentLocation){
 		_locations = locations;
+		_markers = [];
 		_mostRecentLocation = mostRecentLocation;
 		_groupedLocations = _getGroupedLocations(locations);
 		_googleMapsLatLngLocations = _getGoogleMapsLatLngLocations(locations);
@@ -222,6 +223,7 @@ var MapModule = (function(){
 		_clearMap();
 		_groupedLocationsIndex = 0;
 		_locationsIndex = _locations.length-1;
+		_markers = [];//clear out markers, we create new ones for the animations for now..probably not the best way to do it
 
 		playAnimation();
 	};
@@ -265,7 +267,9 @@ var MapModule = (function(){
 		setPlayBackLabel("Playback Information: ("+fromNow+") " + time);
 
 		if(currentLocation.message){
-			var titleFromNow = "<b>("+moment(currentLocation.time).fromNow()+")</b>";
+			var marker = createClickableMarker(currentLocation, "");
+			marker.infoWindow.open(_map, marker);
+			/*var titleFromNow = "<b>("+moment(currentLocation.time).fromNow()+")</b>";
 			var title = titleFromNow+"<br>"+(currentLocation.message||"");
 			var infowindow = new google.maps.InfoWindow({
 				content: title
@@ -275,7 +279,7 @@ var MapModule = (function(){
 				title: title
 			});
 			marker.setMap(_map);
-			infowindow.open(_map, marker);
+			infowindow.open(_map, marker);*/
 
 			markers.push(marker);
 		}
